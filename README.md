@@ -1,39 +1,51 @@
+# Unibase DA
 
-# Unibase DA SDK
-
-**Official SDK for interacting with Unibase DA — the first high-performance decentralized data availability (DA) and storage layer for AI and DePIN applications.**
-
-Built for developers who need scalable, secure, and cost-efficient on-chain data storage and retrieval.
-
----
-
-## 🚀 What is Unibase DA?
-
-Unibase DA provides high-throughput, low-latency decentralized storage and retrieval services, optimized for:
-
-- AI memory (conversation history, knowledge bases)
-- DePIN networks (compute, bandwidth, storage nodes)
-- Cross-chain data availability for decentralized applications (DeFi, SocialFi, GameFi)
-
-It supports seamless file uploading, downloading, and verifiable storage on BNBChain, Optimism, and more.
+**Unibase DA** is a high-performance, decentralized data availability (DA) and storage network, purpose-built for AI agents and on-chain applications.  
+It offers **100GB/s throughput**, **zk-proof-based on-chain verification**, and **EB-level scalability** through decentralized nodes.
 
 ---
 
 ## ✨ Key Features
 
-- **High-Throughput, Low-Latency Storage**  
-  Provides real-time access to decentralized storage with over 100+ GB/s throughput and sub-100ms latency.
+- **High Performance**
+  - 100 GB/s write throughput
+  - 100 MB/s encoding speed
+  - On-chain data verification powered by Zero-Knowledge Proofs (ZKPs)
 
-- **On-Chain Verification via ZK Proofs**  
-  All data storage and retrieval operations are verified with zero-knowledge proofs to ensure security and transparency.
+- **Massive Scalability**
+  - EB+ capacity with decentralized storage pools
+  - 1M+ Depin devices contributing storage, compute, and bandwidth
+  - Private enterprise storage pool support
 
-- **Cross-Chain Compatibility**  
-  Supports BNBChain Testnet, Optimism Sepolia, and opBNB Testnet out-of-the-box.
-
-- **Developer-Friendly SDK**  
-  Simple CLI tools for fast integration into AI, DePIN, and Web3 applications.
+- **On-Chain Programmability**
+  - Smart contract-based access control
+  - Native support for data assetization and customized ownership
 
 ---
+
+## 🛠 Architecture Overview
+
+- **Client Layer**: Submits data commitment and metadata to the chain.
+- **Store Nodes**: Encode, store, and generate zk-proofs for stored data.
+- **Smart Contracts**: Manage identity registration, access permissions, proof validation, and data availability settlement.
+- **On-Chain Verification**: Continuous dual proofs ensure data persistence and reliability.
+
+---
+
+## 🔗 Data Upload / Download SDK
+
+SDK repository: [https://github.com/MOSSV2/dimo-sdk-go](https://github.com/MOSSV2/dimo-sdk-go)
+
+Supported Testnets:
+
+- BNBChain Testnet
+- Optimism Sepolia
+- opBNB Testnet
+
+Quick Start:
+
+```bash
+# Upload file or directory
 
 ## 📦 Installation
 
@@ -79,31 +91,24 @@ go build
   curl -X POST http://54.151.130.2:8080/api/upload -d '{"id":"test1","owner":"0xabcd","message":"sample message"}'
   ```
 
----
-
-## 🌐 Supported Networks
-
-- BNBChain Testnet
-- Optimism Sepolia
-- opBNB Testnet
+Public Hub API available for lightweight storage and retrieval.
 
 ---
 
-## 🤝 Contributing
+## 📚 Documentation
 
-We welcome contributions!
-
-- Fork the repository
-- Create a feature branch
-- Write tests and documentation
-- Submit a Pull Request 🚀
+- Full GitBook: Coming Soon
+- Storage Network Overview
+- On-Chain Proof Workflow
 
 ---
 
 ## 📞 Contact
 
 - Website: [https://www.unibase.com](https://www.unibase.com)
+- Support: [support@unibase.com](mailto:support@unibase.com)
 - Telegram: [@unibase_ai](https://t.me/unibase_ai)
-- Email: <support@unibase.com>
 
 ---
+
+✅ **Unibase DA** redefines high-availability storage for decentralized AI and next-generation Web3 infrastructures.
