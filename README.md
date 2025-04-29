@@ -38,8 +38,8 @@ It supports seamless file uploading, downloading, and verifiable storage on BNBC
 ## 📦 Installation
 
 ```bash
-git clone https://github.com/unibaseio/dimo-sdk-go.git
-cd dimo-sdk-go
+git clone https://github.com/unibaseio/unibase-sdk-go.git
+cd unibase-sdk-go
 go build
 ```
 
