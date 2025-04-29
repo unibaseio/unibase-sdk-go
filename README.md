@@ -1,51 +1,74 @@
+
 # Unibase DA
 
-**Unibase DA** is a high-performance, decentralized data availability (DA) and storage network, purpose-built for AI agents and on-chain applications.  
-It offers **100GB/s throughput**, **zk-proof-based on-chain verification**, and **EB-level scalability** through decentralized nodes.
+**Unibase DA** is a high-performance, decentralized data availability (DA) and storage layer optimized for AI and DePIN workloads. Built with zk-based on-chain verification, it supports massive data throughput and EB-scale capacity while ensuring trust and transparency via Ethereum-based settlement.
 
 ---
 
-## ✨ Key Features
+## 🔍 Why Unibase DA?
 
-- **High Performance**
-  - 100 GB/s write throughput
-  - 100 MB/s encoding speed
-  - On-chain data verification powered by Zero-Knowledge Proofs (ZKPs)
+Current DA solutions (EigenDA, Celestia, Avail, etc.) were designed for rollup transaction data, not the large-scale, real-time data workloads required by AI and DePIN. Unibase DA solves this by offering:
 
-- **Massive Scalability**
-  - EB+ capacity with decentralized storage pools
-  - 1M+ Depin devices contributing storage, compute, and bandwidth
-  - Private enterprise storage pool support
-
-- **On-Chain Programmability**
-  - Smart contract-based access control
-  - Native support for data assetization and customized ownership
+- 🔐 On-chain verifiability with ZK Proofs
+- ⚡️ 100GB/s write throughput & 100MB/s encoding
+- 🌐 Horizontal scaling to millions of devices
+- 🧠 Native support for AI/DePIN memory + model data
+- 📦 Modular storage APIs for files, models, blobs, and streams
 
 ---
 
-## 🛠 Architecture Overview
+## 📊 DA Protocol Comparison
 
-- **Client Layer**: Submits data commitment and metadata to the chain.
-- **Store Nodes**: Encode, store, and generate zk-proofs for stored data.
-- **Smart Contracts**: Manage identity registration, access permissions, proof validation, and data availability settlement.
-- **On-Chain Verification**: Continuous dual proofs ensure data persistence and reliability.
+| Feature                      | Ethereum | EigenDA | Celestia | Avail | 0G | **Unibase DA** |
+|-----------------------------|----------|---------|----------|-------|----|----------------|
+| **Data Verification**       | —        | Off-chain | Off-chain | Off-chain | Off-chain | ✅ **On-chain (ZK Proofs)** |
+| **Data Security Model**     | Honest Majority | Honest Majority | Honest Majority | Honest Majority | Honest Majority | ✅ **Honest One (On-chain)** |
+| **Data Throughput**         | 0.083 MB/s | 10 MB/s | 1.5–10 MB/s | — | 50 GB/s | ✅ **100 GB/s** |
+| **Consensus**               | Casper   | None    | Tendermint | BABE + GRANDPA | Tendermint | None |
+| **DAS Support**             | ❌        | ❌      | ✅        | ✅     | ✅  | ✅ |
+| **Proof Type**              | Validity Proof | Validity Proof | Fraud Proof | Validity Proof | Validity Proof | ✅ **Fraud Proof** |
+| **DA Settlement Layer**     | Ethereum | Ethereum | Celestia | Avail | 0G | ✅ **Ethereum** |
 
 ---
 
-## 🔗 Data Upload / Download SDK
+## 📦 Features
 
-SDK repository: [https://github.com/MOSSV2/dimo-sdk-go](https://github.com/MOSSV2/dimo-sdk-go)
+### ✅ High Performance
 
-Supported Testnets:
+- **Write Throughput:** 100 GB/s+
+- **Encoding Speed:** 100 MB/s
+- **Low-Latency Access:** Built for real-time AI/DePIN scenarios
 
-- BNBChain Testnet
-- Optimism Sepolia
-- opBNB Testnet
+### ✅ High Scalability
 
-Quick Start:
+- **Capacity:** EB+
+- **Nodes:** 1M+ edge/DePIN nodes
+- **Storage Pools:** Public & private options
+
+### ✅ Programmable
+
+- **Ownership & Access Control:** On-chain via smart contracts
+- **ZK Proofs:** Enable verifiable data integrity
+- **Assetization:** Built-in support for data NFTs & streams
+
+---
+
+## 🧠 Architecture
+
+Unibase DA follows a multi-layer architecture to ensure speed, reliability, and transparency:
+
+- **Smart Contract Layer:** Receives commitment, validates encode proofs, settles data
+- **Storage Nodes:** Store encoded data blocks
+- **ZK Verifier:** Validates submitted proofs
+- **Client SDK:** Uploads files, generates proofs, interacts with contracts
+
+![Unibase DA Verification Diagram](https://path-to-image/da-verification.png)
+
+---
+
+## 🚀 SDK Quickstart
 
 ```bash
-# Upload file or directory
 
 ## 📦 Installation
 
@@ -95,20 +118,16 @@ Public Hub API available for lightweight storage and retrieval.
 
 ---
 
-## 📚 Documentation
+## 🔗 Links
 
-- Full GitBook: Coming Soon
-- Storage Network Overview
-- On-Chain Proof Workflow
-
----
-
-## 📞 Contact
-
-- Website: [https://www.unibase.com](https://www.unibase.com)
-- Support: [support@unibase.com](mailto:support@unibase.com)
-- Telegram: [@unibase_ai](https://t.me/unibase_ai)
+- 🌐 Website: [https://www.unibase.com](https://www.unibase.com)
+- 📖 GitBook: [Unibase Docs](https://openos-labs.gitbook.io/unibase-docs/)
+- 🧠 GitHub: [github.com/unibaseio](https://github.com/unibaseio)
+- 🐦 Twitter: [@Unibase_AI](https://twitter.com/Unibase_AI)
+- 📢 Telegram: [@unibase_ai](https://t.me/unibase_ai)
 
 ---
 
-✅ **Unibase DA** redefines high-availability storage for decentralized AI and next-generation Web3 infrastructures.
+## 📜 License
+
+MIT License
