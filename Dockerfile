@@ -20,6 +20,7 @@ ARG BUILD_DATE="unknown"
 ARG EXTRA_BUILD_ARGS=""
 COPY . .
 COPY scripts/start.sh /app/start
+RUN go env -w GOPROXY=https://goproxy.cn,direct
 RUN GOOS=linux GOARCH=$TARGETARCH go build $EXTRA_BUILD_ARGS \
       -ldflags '-w -extldflags "-static"' \
       -o /app/hub ./app/hub

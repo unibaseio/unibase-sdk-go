@@ -3,6 +3,7 @@ package hub
 import (
 	"bytes"
 	"encoding/binary"
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -10,7 +11,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/MOSSV2/dimo-sdk-go/contract"
+	contract "github.com/MOSSV2/dimo-sdk-go/contract/v1"
 	lerror "github.com/MOSSV2/dimo-sdk-go/lib/error"
 	"github.com/MOSSV2/dimo-sdk-go/lib/key"
 	"github.com/MOSSV2/dimo-sdk-go/lib/logfs"
@@ -26,7 +27,14 @@ func (s *Server) addUpload(g *gin.RouterGroup) {
 
 func (s *Server) uploadData(c *gin.Context) {
 	addr := c.PostForm("owner")
-
+	if addr == "" {
+		c.JSON(599, lerror.ToAPIError("hub", fmt.Errorf("owner is required")))
+		return
+	}
+	bucket := c.PostForm("bucket")
+	if bucket == "" {
+		bucket = addr
+	}
 	file, err := c.FormFile("file")
 	if err != nil {
 		c.JSON(599, lerror.ToAPIError("hub", err))
@@ -48,7 +56,7 @@ func (s *Server) uploadData(c *gin.Context) {
 		c.JSON(599, lerror.ToAPIError("hub", fmt.Errorf("empty file")))
 		return
 	}
-	mm, err := s.logFSWrite(addr, file.Filename, fr)
+	mm, err := s.logFSWrite(addr, bucket, file.Filename, fr)
 	if err != nil {
 		c.JSON(599, lerror.ToAPIError("hub", err))
 		return
@@ -66,10 +74,25 @@ func (s *Server) upload(c *gin.Context) {
 		return
 	}
 
+	if mjson.Bucket == "" {
+		var meta map[string]interface{}
+		err = json.Unmarshal([]byte(mjson.Message), &meta)
+		if err != nil {
+			c.JSON(599, lerror.ToAPIError("hub", err))
+			return
+		}
+		bucketName, ok := meta["name"].(string)
+		if ok {
+			mjson.Bucket = bucketName
+		} else {
+			mjson.Bucket = mjson.Owner
+		}
+	}
+
 	var buf bytes.Buffer
 	buf.WriteString(mjson.Message)
 
-	mm, err := s.logFSWrite(mjson.Owner, mjson.ID, &buf)
+	mm, err := s.logFSWrite(mjson.Owner, mjson.Bucket, mjson.ID, &buf)
 	if err != nil {
 		c.JSON(599, lerror.ToAPIError("hub", err))
 		return
@@ -78,11 +101,21 @@ func (s *Server) upload(c *gin.Context) {
 	c.JSON(http.StatusOK, mm)
 }
 
-func (s *Server) logFSWrite(addr string, key string, r io.Reader) (types.MemeMeta, error) {
+func (s *Server) logFSWrite(addr string, bucket string, key string, r io.Reader) (types.MemeMeta, error) {
 	var err error
 	if addr == "" {
 		addr = s.local.String()
 	}
+
+	if bucket == "" {
+		bucket = addr
+	}
+
+	err = s.addBucket(addr, bucket)
+	if err != nil {
+		return types.MemeMeta{}, err
+	}
+
 	s.Lock()
 	fs, ok := s.lfs[addr]
 	if !ok {
@@ -128,7 +161,7 @@ func (s *Server) logFSWrite(addr string, key string, r io.Reader) (types.MemeMet
 		return types.MemeMeta{}, err
 	}
 
-	s.addNeedle(addr, key, lm.Index, lm.Start, lm.Size)
+	s.addNeedle(addr, bucket, key, lm.Index, lm.Start, lm.Size)
 
 	mm := types.MemeMeta{
 		File:  fmt.Sprintf("%s/%d.log", addr, lm.Index),
@@ -331,14 +364,16 @@ func (s *Server) uploadTo() {
 				log.Printf("upload %s to %s, sha256: %s\n", fp, streamer, res.Hash)
 				log.Printf("submit %s to chain\n", res.Name)
 				// submit meta to chain
+				var terr error
 				for _, pc := range pcs {
 					txn, err := cm.AddPiece(pc)
 					if err != nil {
+						terr = err
 						break
 					}
 					s.addVolume(key, i, pc.Name, txn)
 				}
-				if err != nil {
+				if terr != nil {
 					break
 				}
 				buf := make([]byte, 8)

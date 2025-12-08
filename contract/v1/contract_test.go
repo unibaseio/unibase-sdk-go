@@ -10,6 +10,8 @@ import (
 	"testing"
 	"time"
 
+	com "github.com/MOSSV2/dimo-sdk-go/contract/common"
+
 	"github.com/MOSSV2/dimo-sdk-go/build"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -132,22 +134,22 @@ func TestTotalReward(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	ts, err := ri.TotalShare(&bind.CallOpts{From: Base})
+	ts, err := ri.TotalShare(&bind.CallOpts{From: com.Base})
 	if err != nil {
 		t.Fatal(err)
 	}
 	t.Log(ts)
-	cur, err := ri.Current(&bind.CallOpts{From: Base})
+	cur, err := ri.Current(&bind.CallOpts{From: com.Base})
 	if err != nil {
 		t.Fatal(err)
 	}
 	t.Log(cur)
-	val, err := ri.Rest(&bind.CallOpts{From: Base})
+	val, err := ri.Rest(&bind.CallOpts{From: com.Base})
 	if err != nil {
 		t.Fatal(err)
 	}
 	t.Log(val)
-	rsi, err := ri.GetEReward(&bind.CallOpts{From: Base}, cur-1)
+	rsi, err := ri.GetEReward(&bind.CallOpts{From: com.Base}, cur-1)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -249,7 +251,7 @@ func TestBlock(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	pcu, err := pi.Current(&bind.CallOpts{From: Base})
+	pcu, err := pi.Current(&bind.CallOpts{From: com.Base})
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/big"
 
+	com "github.com/MOSSV2/dimo-sdk-go/contract/common"
 	"github.com/MOSSV2/dimo-sdk-go/lib/types"
 
 	"github.com/ethereum/go-ethereum/accounts/abi"
@@ -63,7 +64,7 @@ func (c *ContractManage) HandleAddPiece(elog etypes.Log, cabi abi.ABI) (types.Pi
 	pc.Serial = ld[0].(uint64)
 	pc.Start = ld[1].(uint64)
 
-	tx, err := getTransactionRetry(c.RPC, elog.TxHash)
+	tx, err := com.GetTransactionRetry(c.RPC, elog.TxHash)
 	if err != nil {
 		return pc, err
 	}
@@ -83,9 +84,9 @@ func (c *ContractManage) HandleAddPiece(elog etypes.Log, cabi abi.ABI) (types.Pi
 		return pc, fmt.Errorf("invalid input length")
 	}
 
-	g1, err := SolidityToG1(inputs[0].([]byte))
+	g1, err := com.SolidityToG1(inputs[0].([]byte))
 	if err == nil {
-		pc.Name = G1ToString(g1)
+		pc.Name = com.G1ToString(g1)
 	} else {
 		pc.Name = hex.EncodeToString(inputs[0].([]byte))
 	}
@@ -125,7 +126,7 @@ func (c *ContractManage) HandleAddReplica(elog etypes.Log, cabi abi.ABI) (types.
 	rc.Serial = ld[0].(uint64)
 	rc.Witness.Index = ld[1].(uint64)
 
-	tx, err := getTransactionRetry(c.RPC, elog.TxHash)
+	tx, err := com.GetTransactionRetry(c.RPC, elog.TxHash)
 	if err != nil {
 		return rc, err
 	}
@@ -145,9 +146,9 @@ func (c *ContractManage) HandleAddReplica(elog etypes.Log, cabi abi.ABI) (types.
 		return rc, fmt.Errorf("invalid input length")
 	}
 
-	g1, err := SolidityToG1(inputs[0].([]byte))
+	g1, err := com.SolidityToG1(inputs[0].([]byte))
 	if err == nil {
-		rc.Name = G1ToString(g1)
+		rc.Name = com.G1ToString(g1)
 	} else {
 		rc.Name = hex.EncodeToString(inputs[0].([]byte))
 	}
@@ -230,7 +231,7 @@ func (c *ContractManage) HandleSubmitEProof(elog etypes.Log, cabi abi.ABI) (type
 	}
 	ei.Epoch = ld[0].(uint64)
 
-	tx, err := getTransactionRetry(c.RPC, elog.TxHash)
+	tx, err := com.GetTransactionRetry(c.RPC, elog.TxHash)
 	if err != nil {
 		return ei, err
 	}
@@ -251,7 +252,7 @@ func (c *ContractManage) HandleSubmitEProof(elog etypes.Log, cabi abi.ABI) (type
 	}
 
 	sum := inputs[1].([]byte)
-	g1, err := SolidityToG1(sum)
+	g1, err := com.SolidityToG1(sum)
 	if err == nil {
 		g1b := g1.Bytes()
 		ei.Sum = g1b[:]
@@ -261,13 +262,13 @@ func (c *ContractManage) HandleSubmitEProof(elog etypes.Log, cabi abi.ABI) (type
 
 	pf := inputs[2].(([]byte))
 	if len(pf) == 144 {
-		g1, err := SolidityToG1(pf[:96])
+		g1, err := com.SolidityToG1(pf[:96])
 		if err == nil {
 			g1b := g1.Bytes()
 			ei.H = g1b[:]
 		}
 
-		fr, err := SolidityToFr(pf[96:144])
+		fr, err := com.SolidityToFr(pf[96:144])
 		if err == nil {
 			ei.Value = fr.Marshal()
 		}
@@ -327,7 +328,7 @@ func (c *ContractManage) HandleEPProve(elog etypes.Log, cabi abi.ABI) (types.EPC
 	ei.Epoch = ld[0].(uint64)
 	ei.Round = ld[1].(uint8)
 
-	tx, err := getTransactionRetry(c.RPC, elog.TxHash)
+	tx, err := com.GetTransactionRetry(c.RPC, elog.TxHash)
 	if err != nil {
 		return ei, err
 	}
@@ -350,7 +351,7 @@ func (c *ContractManage) HandleEPProve(elog etypes.Log, cabi abi.ABI) (types.EPC
 	coms := inputs[1].([][]byte)
 	ei.Coms = make([][]byte, 0, len(coms))
 	for i := 0; i < len(coms); i++ {
-		g1, err := SolidityToG1(coms[i])
+		g1, err := com.SolidityToG1(coms[i])
 		if err == nil {
 			g1b := g1.Bytes()
 			ei.Coms = append(ei.Coms, g1b[:])

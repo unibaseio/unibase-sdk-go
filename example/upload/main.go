@@ -9,7 +9,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/MOSSV2/dimo-sdk-go/contract"
+	com "github.com/MOSSV2/dimo-sdk-go/contract/common"
+	contract "github.com/MOSSV2/dimo-sdk-go/contract/v1"
 	"github.com/MOSSV2/dimo-sdk-go/lib/key"
 	"github.com/MOSSV2/dimo-sdk-go/lib/types"
 	"github.com/MOSSV2/dimo-sdk-go/sdk"
@@ -54,7 +55,7 @@ func UploadFile(sk *ecdsa.PrivateKey, fp string, fname bool) error {
 	// charge from server
 	sdk.Login(sdk.ServerURL, au)
 
-	cm, err := contract.NewContractManage(sk, contract.OPSepolia)
+	cm, err := contract.NewContractManage(sk, com.OPSepolia)
 	if err != nil {
 		return err
 	}

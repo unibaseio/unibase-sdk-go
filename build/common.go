@@ -7,6 +7,7 @@ const (
 	OPSepolia    = "op-sepolia"
 	OPBNBTestnet = "opbnb-testnet"
 	BNBTestnet   = "bnb-testnet"
+	LocalAnvil   = "local-anvil"
 )
 
 func CheckChain() string {

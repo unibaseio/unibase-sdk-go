@@ -1,7 +1,38 @@
+const itemsPerPage = 12;
+let currentPage = 1;
+
 document.addEventListener("DOMContentLoaded", () => {
+  // 初始化页面
+  renderPage();
+
+  // 添加分页按钮事件监听
+  document.getElementById('prevBtn').addEventListener('click', function () {
+    if (currentPage > 1) {
+      currentPage--;
+      renderPage();
+    }
+  });
+
+  document.getElementById('nextBtn').addEventListener('click', function () {
+    currentPage++;
+    renderPage();
+  });
+});
+
+function renderPage() {
   const cardContainer = document.getElementById("cardContainer");
-  listAccount()
+  // 清空当前内容
+  cardContainer.innerHTML = '';
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  listAccount(startIndex, itemsPerPage)
     .then((data) => {
+      if (data.length === 0 && currentPage > 1) {
+        // 如果当前页没有数据且不是第一页，返回上一页
+        currentPage--;
+        renderPage();
+        return;
+      }
       data.forEach((meta) => {
         const card = createCard(meta);
         cardContainer.appendChild(card);
@@ -9,47 +40,65 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .catch((error) => console.error("Error fetching accounts:", error));
 
-});
+  // 更新页码显示
+  document.getElementById('pageNumber').innerText = `Page: ${currentPage}`;
+}
 
 function createCard(meta) {
   const card = document.createElement("div");
   card.className = "card";
 
-
   const h2 = document.createElement("h2");
   h2.textContent = meta.Name;
   card.appendChild(h2);
 
+  const cardContent = document.createElement("div");
+  cardContent.className = "card-content";
+  card.appendChild(cardContent);
+
   const p0 = document.createElement("p");
-  p0.textContent = `Creation: ${meta.CreatedAt}`;
-  card.appendChild(p0);
+  p0.setAttribute('data-label', 'Creation:');
+  p0.textContent = meta.CreatedAt;
+  cardContent.appendChild(p0);
+
+  const p3 = document.createElement("p");
+  p3.setAttribute('data-label', 'Agents:');
+  const bucketLink = document.createElement('a');
+  bucketLink.href = 'bucket.html?owner=' + meta.Name;
+  bucketLink.textContent = '[click to show]';
+  p3.appendChild(bucketLink);
+  cardContent.appendChild(p3);
+
+  const p4 = document.createElement("p");
+  p4.setAttribute('data-label', 'Conversations:');
+  const conversationLink = document.createElement('a');
+  conversationLink.href = 'conversation.html?owner=' + meta.Name;
+  conversationLink.textContent = '[click to show]';
+  p4.appendChild(conversationLink);
+  cardContent.appendChild(p4);
 
   const p1 = document.createElement("p");
-  //p1.textContent = `Needle List: [click to expand]`;
-  //p1.onclick = () => toNeedle(meta.Name);
-  p1.innerHTML = "Needle List: <a href='needle.html?owner=" + meta.Name + "'> [click to show] </a >";
-  card.appendChild(p1);
+  p1.setAttribute('data-label', 'Memories:');
+  const needleLink = document.createElement('a');
+  needleLink.href = 'needle.html?owner=' + meta.Name;
+  needleLink.textContent = '[click to show]';
+  p1.appendChild(needleLink);
+  cardContent.appendChild(p1);
 
   const p2 = document.createElement("p");
-  //p2.textContent = `Volume List: [click to expand]`;
-  //p2.onclick = () => toVolume(meta.Name);
-  p2.innerHTML = "Volume List: <a href='volume.html?owner=" + meta.Name + "'> [click to show] </a >";
-  card.appendChild(p2);
+  p2.setAttribute('data-label', 'Volumes :');
+  const volumeLink = document.createElement('a');
+  volumeLink.href = 'volume.html?owner=' + meta.Name;
+  volumeLink.textContent = '[click to show]';
+  p2.appendChild(volumeLink);
+  cardContent.appendChild(p2);
+
 
   return card;
 }
 
-function toNeedle(eaddr) {
-  window.location.href = `needle.html?owner=${eaddr}`;
-}
-
-function toVolume(eaddr) {
-  window.location.href = `volume.html?owner=${eaddr}`;
-}
-
-
-function listAccount() {
-  return fetch(`/api/listAccount`)
+function listAccount(offset = 0, length = itemsPerPage) {
+  return fetch(`/api/listAccount?offset=${offset}&length=${length}`)
     .then((response) => response.json())
     .then((data) => {
       return data;
@@ -79,4 +128,8 @@ function displayResults(data) {
       resultsElement.appendChild(card);
     });
   }
+
+  // 重置分页状态
+  currentPage = 1;
+  document.getElementById('pageNumber').innerText = `Page: ${currentPage}`;
 }

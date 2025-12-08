@@ -74,44 +74,126 @@ nav a:hover {
     background-color: lightgray;
 }
 
+/* 卡片容器统一样式 */
 .card-container {
-    display: flex;
-    flex-direction: column;
-    /* 垂直排列 */
-    flex-wrap: wrap;
-    justify-content: center;
-    /* 垂直居中 */
-    align-items: center;
-    /* 水平居中 */
-    padding: 8px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    padding: 1.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
+/* 卡片基础样式 */
 .card {
-    flex: 1;
-    max-width: 100%;
-    width: 98%;
-    /* 设置卡片的最大宽度 */
-    background-color: #ffffff;
-    /* 卡片的背景颜色 */
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 2px;
-    margin: 2px;
-    color: #333333;
-    /* 卡片的文本颜色 */
-    /* 设置内容溢出时显示滚动条 */
-    overflow: auto;
+    background: #2d2d2d;
+    border: 1px solid #3d3d3d;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* 卡片标题样式 */
+.card h2 {
+    margin: 0;
+    padding: 1rem;
+    color: #e0e0e0;
+    font-size: 1.1rem;
+    font-weight: 500;
+    border-bottom: 1px solid #3d3d3d;
+    word-wrap: break-word;
+    word-break: break-all;
+    white-space: pre-wrap;
+    line-height: 1.4;
+}
+
+/* 卡片内容区域样式 */
+.card-content {
+    padding: 1rem;
+}
+
+/* 卡片内容文本样式 */
 .card p {
-    /* 自动换行 */
-    word-wrap: break-word;
+    margin: 0.5rem 0;
+    color: #b0b0b0;
+    line-height: 1.5;
+    font-size: 0.95rem;
 }
 
-h2 {
-    /* 卡片名称自动换行 */
-    word-wrap: break-word;
-    margin-top: 0;
+/* 标签和内容的样式 */
+.card p[data-label] {
+    display: flex;
+    margin: 0.5rem 0;
+    word-break: break-word;
+}
+
+.card p[data-label]::before {
+    content: attr(data-label);
+    color: #808080;
+    font-weight: 500;
+    min-width: 120px;
+    display: inline-block;
+}
+
+/* 移动端适配 */
+@media screen and (max-width: 768px) {
+    .card-container {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .card {
+        margin: 0;
+    }
+
+    .card h2 {
+        padding: 0.8rem 1rem;
+        font-size: 1rem;
+        line-height: 1.3;
+    }
+
+    .card-content {
+        padding: 0.8rem;
+    }
+
+    .card p {
+        font-size: 0.9rem;
+        margin: 0.4rem 0;
+    }
+
+    .card p[data-label] {
+        flex-direction: column;
+    }
+
+    .card p[data-label]::before {
+        margin-bottom: 0.25rem;
+    }
+}
+
+/* 超小屏幕适配 */
+@media screen and (max-width: 360px) {
+    .card-container {
+        padding: 0.5rem;
+    }
+
+    .card h2 {
+        padding: 0.6rem;
+        font-size: 0.95rem;
+    }
+
+    .card-content {
+        padding: 0.6rem;
+    }
+
+    .card p {
+        font-size: 0.85rem;
+    }
 }
 
 .prompt-dialog {
@@ -333,33 +415,498 @@ button:hover {
     border-radius: 4px;
 }
 
-pre {
-    white-space: pre-wrap;
-    word-break: keep-all;
-    word-wrap: break-word;
+/* 现代化基础样式 */
+body {
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #f5f7fa;
+    color: #2d3748;
 }
 
-pagination-container {
+/* 导航栏现代化样式 */
+nav {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    /* 减小与搜索框的距离 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+nav ul {
     display: flex;
     justify-content: center;
-    padding: 10px;
+    gap: 2rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+nav a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* 卡片现代化样式 */
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card h2 {
+    margin: 0 0 1rem 0;
+    color: #2d3748;
+    font-size: 1.25rem;
+}
+
+.card p {
+    margin: 0.5rem 0;
+    color: #4a5568;
+    line-height: 1.5;
+}
+
+/* 搜索框现代化样式 */
+#searchInput {
+    width: 100%;
+    max-width: 400px;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    margin: 0 auto 1.5rem auto;
+    display: block;
+}
+
+#searchInput:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* 按钮现代化样式 */
+button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: block;
+    margin: 0 auto;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* 分页按钮样式 */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+    /* 减小与上方内容的距离 */
+    margin-bottom: 1rem;
+    /* 添加底部边距 */
+    gap: 1rem;
 }
 
 .pagination-btn {
-    padding: 10px 20px;
-    margin: 10px 5px;
-    color: black;
-    border: 5px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
     cursor: pointer;
-    border-radius: 5px;
+    transition: all 0.3s ease;
 }
 
 .pagination-btn:hover {
-    background-color: lightskyblue;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    background: linear-gradient(135deg, #7687ea 0%, #8b5fb8 100%);
 }
 
 .pagination-info {
-    margin: 0 10px;
-    font-size: 16px;
-    line-height: 30px;
+    color: #b0b0b0;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 8px;
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    min-width: 100px;
+    text-align: center;
+}
+
+/* 代码块样式优化 */
+pre {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    font-family: 'Fira Code', monospace;
+    overflow-x: auto;
+}
+
+/* 现代导航栏样式 */
+.modern-nav {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.modern-nav ul {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.modern-nav a {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.8rem 1.5rem;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.modern-nav a:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.modern-nav .icon {
+    font-size: 1.2rem;
+}
+
+/* 页面背景样式 */
+body {
+    background: linear-gradient(135deg, #1a1c2c 0%, #2a3c54 100%);
+    color: #fff;
+    min-height: 100vh;
+}
+
+/* 内容页面暗色主题样式 */
+body {
+    background: #1a1a1a;
+    color: #e0e0e0;
+}
+
+.card {
+    background: #2d2d2d;
+    border: 1px solid #3d3d3d;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.card h2 {
+    color: #e0e0e0;
+}
+
+.card p {
+    color: #b0b0b0;
+}
+
+/* 代码块和预格式文本样式优化 */
+pre {
+    background: #232323;
+    color: #b0b0b0;
+    border: 1px solid #3d3d3d;
+    padding: 1rem;
+    border-radius: 8px;
+    font-family: 'Monaco', 'Consolas', monospace;
+    line-height: 1.5;
+}
+
+/* 链接样式 */
+a {
+    color: #7eb6ff;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #5c9eff;
+    text-decoration: underline;
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #2d2d2d;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #4d4d4d;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #5d5d5d;
+}
+
+/* 基础响应式布局 */
+@media screen and (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    /* 导航栏移动端适配 */
+    nav {
+        padding: 0.5rem;
+        margin-bottom: 0.5rem;
+        /* 移动端下进一步减小间距 */
+    }
+
+    nav ul {
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    nav a {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    /* 卡片容器移动端适配 */
+    .card-container {
+        grid-template-columns: 1fr;
+        /* 单列 */
+        gap: 1rem;
+        padding: 0.5rem;
+    }
+
+    /* 卡片移动端样式 */
+    .card {
+        padding: 0;
+        margin: 0.5rem 0;
+        width: 100%;
+        border-radius: 12px;
+    }
+
+    .card h2 {
+        padding: 0.8rem 1rem;
+        font-size: 1.1rem;
+        line-height: 1.3;
+    }
+
+    .card-content {
+        padding: 1rem;
+    }
+
+    .card p {
+        font-size: 0.9rem;
+        margin: 0.4rem 0;
+        padding-right: 0.5rem;
+    }
+
+    /* 搜索框移动端适配 */
+    #searchInput {
+        padding: 0.8rem 1rem;
+        margin: 1rem auto;
+        font-size: 0.9rem;
+        width: calc(100% - 2rem);
+    }
+
+    /* 按钮移动端适配 */
+    button {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+        width: auto;
+    }
+
+    /* 分页控制移动端适配 */
+    .pagination-container {
+        margin-top: 0.5rem;
+        /* 移动端下减小间距 */
+        margin-bottom: 0.5rem;
+    }
+
+    .pagination-btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    .pagination-info {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+        min-width: 80px;
+    }
+
+    /* 长文本内容处理 */
+    .card p[data-label] {
+        display: block;
+        word-break: break-all;
+        padding-right: 0;
+    }
+
+    .card p[data-label]::before {
+        display: block;
+        margin-bottom: 0.2rem;
+        color: #808080;
+    }
+
+    /* 链接文本溢出处理 */
+    .card a {
+        word-break: break-all;
+        display: inline-block;
+    }
+}
+
+/* 搜索区域容器 */
+.search-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin: 0.5rem auto;
+    /* 减小上下边距 */
+    max-width: 800px;
+    width: 90%;
+    padding: 0 1rem;
+}
+
+/* 搜索框现代化样式 */
+#searchInput {
+    flex: 1;
+    width: auto;
+    max-width: none;
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border: 2px solid #3d3d3d;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+#searchInput:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+    outline: none;
+}
+
+/* 搜索按钮样式 */
+.search-button {
+    padding: 0.75rem 1.5rem;
+    min-width: 100px;
+    /* 添加最小宽度 */
+    border-radius: 8px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+/* 移动端适配 */
+@media screen and (max-width: 768px) {
+    .search-container {
+        margin: 0.25rem auto;
+        /* 移动端下进一步减小间距 */
+        width: 95%;
+        padding: 0 0.5rem;
+        gap: 0.5rem;
+    }
+
+    #searchInput {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    .search-button {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+        min-width: 80px;
+        /* 移动端下减小最小宽度 */
+    }
+}
+
+/* content页面特殊样式 */
+body.content-page {
+    padding: 1rem;
+}
+
+.content-page .card-container {
+    display: block;
+    max-width: 100%;
+    padding: 1rem;
+}
+
+.content-page .card {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.content-page .card pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    word-break: break-all;
+    max-width: 100%;
+    overflow-x: auto;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    padding: 1rem;
+    margin: 0.5rem 0;
+    background: #232323;
+    border: 1px solid #3d3d3d;
+    border-radius: 8px;
+}
+
+@media screen and (max-width: 768px) {
+    .content-page .card-container {
+        padding: 0.5rem;
+    }
+
+    .content-page .card pre {
+        font-size: 0.85rem;
+        padding: 0.8rem;
+    }
 }

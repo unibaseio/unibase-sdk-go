@@ -12,7 +12,8 @@ import (
 	"path"
 	"strings"
 
-	"github.com/MOSSV2/dimo-sdk-go/contract"
+	com "github.com/MOSSV2/dimo-sdk-go/contract/common"
+	contract "github.com/MOSSV2/dimo-sdk-go/contract/v1"
 	"github.com/MOSSV2/dimo-sdk-go/lib/archive"
 	"github.com/MOSSV2/dimo-sdk-go/lib/bls"
 	"github.com/MOSSV2/dimo-sdk-go/lib/types"
@@ -169,7 +170,7 @@ func UploadModelFiles(url string, sk *ecdsa.PrivateKey, au types.Auth, fp string
 		return mrm, err
 	}
 
-	cm, err := contract.NewContractManage(sk, contract.OPSepolia)
+	cm, err := contract.NewContractManage(sk, com.OPSepolia)
 	if err != nil {
 		panic(err)
 	}

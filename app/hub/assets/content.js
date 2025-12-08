@@ -34,17 +34,23 @@ function createDataCard(owner, name, meta) {
   h2.textContent = name;
   card.appendChild(h2);
 
+  const cardContent = document.createElement("div");
+  cardContent.className = "card-content";
+  card.appendChild(cardContent);
+
   const p5 = document.createElement("p");
-  p5.textContent = `Owner: ${owner}`;
-  card.appendChild(p5);
+  p5.setAttribute('data-label', 'Owner:');
+  p5.textContent = owner;
+  cardContent.appendChild(p5);
 
   const p0 = document.createElement("p");
-  p0.innerHTML = "<p>Content:</p>";
-  p0.innerHTML += "<pre>" + formatString(meta) + "</pre>"
-  //p0.innerHTML += "</pre >"
-  card.appendChild(p0);
+  p0.setAttribute('data-label', 'Content:');
+  const pre = document.createElement('pre');
+  pre.textContent = formatString(meta);
+  p0.appendChild(pre);
+  cardContent.appendChild(p0);
 
-  return card
+  return card;
 }
 
 function formatString(str) {

@@ -3,21 +3,22 @@ package contract
 import (
 	"context"
 
-	"github.com/MOSSV2/dimo-sdk-go/contract/go/bank"
-	"github.com/MOSSV2/dimo-sdk-go/contract/go/control"
-	"github.com/MOSSV2/dimo-sdk-go/contract/go/epoch"
-	"github.com/MOSSV2/dimo-sdk-go/contract/go/eproof"
-	"github.com/MOSSV2/dimo-sdk-go/contract/go/everify"
-	"github.com/MOSSV2/dimo-sdk-go/contract/go/gpu"
-	"github.com/MOSSV2/dimo-sdk-go/contract/go/model"
-	"github.com/MOSSV2/dimo-sdk-go/contract/go/node"
-	"github.com/MOSSV2/dimo-sdk-go/contract/go/piece"
-	"github.com/MOSSV2/dimo-sdk-go/contract/go/plonk/kzg"
-	"github.com/MOSSV2/dimo-sdk-go/contract/go/plonk/rsone"
-	"github.com/MOSSV2/dimo-sdk-go/contract/go/reward"
-	"github.com/MOSSV2/dimo-sdk-go/contract/go/rsproof"
-	"github.com/MOSSV2/dimo-sdk-go/contract/go/space"
-	"github.com/MOSSV2/dimo-sdk-go/contract/go/token"
+	com "github.com/MOSSV2/dimo-sdk-go/contract/common"
+	"github.com/MOSSV2/dimo-sdk-go/contract/v1/go/bank"
+	"github.com/MOSSV2/dimo-sdk-go/contract/v1/go/control"
+	"github.com/MOSSV2/dimo-sdk-go/contract/v1/go/epoch"
+	"github.com/MOSSV2/dimo-sdk-go/contract/v1/go/eproof"
+	"github.com/MOSSV2/dimo-sdk-go/contract/v1/go/everify"
+	"github.com/MOSSV2/dimo-sdk-go/contract/v1/go/gpu"
+	"github.com/MOSSV2/dimo-sdk-go/contract/v1/go/model"
+	"github.com/MOSSV2/dimo-sdk-go/contract/v1/go/node"
+	"github.com/MOSSV2/dimo-sdk-go/contract/v1/go/piece"
+	"github.com/MOSSV2/dimo-sdk-go/contract/v1/go/plonk/kzg"
+	"github.com/MOSSV2/dimo-sdk-go/contract/v1/go/plonk/rsone"
+	"github.com/MOSSV2/dimo-sdk-go/contract/v1/go/reward"
+	"github.com/MOSSV2/dimo-sdk-go/contract/v1/go/rsproof"
+	"github.com/MOSSV2/dimo-sdk-go/contract/v1/go/space"
+	"github.com/MOSSV2/dimo-sdk-go/contract/v1/go/token"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -44,7 +45,7 @@ func (c *ContractManage) NewToken(ctx context.Context) (*token.Token, error) {
 	if err != nil {
 		return nil, err
 	}
-	taddr, err := bi.Get(&bind.CallOpts{From: Base}, "token")
+	taddr, err := bi.Get(&bind.CallOpts{From: com.Base}, "token")
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +63,7 @@ func (c *ContractManage) NewEpoch(ctx context.Context) (*epoch.Epoch, error) {
 	if err != nil {
 		return nil, err
 	}
-	eaddr, err := bi.Get(&bind.CallOpts{From: Base}, "epoch")
+	eaddr, err := bi.Get(&bind.CallOpts{From: com.Base}, "epoch")
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +81,7 @@ func (c *ContractManage) NewControl(ctx context.Context) (*control.Control, erro
 	if err != nil {
 		return nil, err
 	}
-	caddr, err := bi.Get(&bind.CallOpts{From: Base}, "control")
+	caddr, err := bi.Get(&bind.CallOpts{From: com.Base}, "control")
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +99,7 @@ func (c *ContractManage) NewNode(ctx context.Context) (*node.Node, error) {
 	if err != nil {
 		return nil, err
 	}
-	naddr, err := bi.Get(&bind.CallOpts{From: Base}, "node")
+	naddr, err := bi.Get(&bind.CallOpts{From: com.Base}, "node")
 	if err != nil {
 		return nil, err
 	}
@@ -116,7 +117,7 @@ func (c *ContractManage) NewPiece(ctx context.Context) (*piece.Piece, error) {
 	if err != nil {
 		return nil, err
 	}
-	faddr, err := bi.Get(&bind.CallOpts{From: Base}, "piece")
+	faddr, err := bi.Get(&bind.CallOpts{From: com.Base}, "piece")
 	if err != nil {
 		return nil, err
 	}
@@ -134,7 +135,7 @@ func (c *ContractManage) NewReward(ctx context.Context) (*reward.Reward, error) 
 	if err != nil {
 		return nil, err
 	}
-	faddr, err := bi.Get(&bind.CallOpts{From: Base}, "reward")
+	faddr, err := bi.Get(&bind.CallOpts{From: com.Base}, "reward")
 	if err != nil {
 		return nil, err
 	}
@@ -152,7 +153,7 @@ func (c *ContractManage) NewRSProof(ctx context.Context) (*rsproof.RSProof, erro
 	if err != nil {
 		return nil, err
 	}
-	faddr, err := bi.Get(&bind.CallOpts{From: Base}, "rsproof")
+	faddr, err := bi.Get(&bind.CallOpts{From: com.Base}, "rsproof")
 	if err != nil {
 		return nil, err
 	}
@@ -170,7 +171,7 @@ func (c *ContractManage) NewRSOne(ctx context.Context) (*rsone.PlonkVerifier, er
 	if err != nil {
 		return nil, err
 	}
-	faddr, err := bi.Get(&bind.CallOpts{From: Base}, "rsone")
+	faddr, err := bi.Get(&bind.CallOpts{From: com.Base}, "rsone")
 	if err != nil {
 		return nil, err
 	}
@@ -188,7 +189,7 @@ func (c *ContractManage) NewKZGPlonk(ctx context.Context) (*kzg.PlonkVerifier, e
 	if err != nil {
 		return nil, err
 	}
-	faddr, err := bi.Get(&bind.CallOpts{From: Base}, "kzg")
+	faddr, err := bi.Get(&bind.CallOpts{From: com.Base}, "kzg")
 	if err != nil {
 		return nil, err
 	}
@@ -206,7 +207,7 @@ func (c *ContractManage) NewMulPlonk(ctx context.Context) (*kzg.PlonkVerifier, e
 	if err != nil {
 		return nil, err
 	}
-	faddr, err := bi.Get(&bind.CallOpts{From: Base}, "mul")
+	faddr, err := bi.Get(&bind.CallOpts{From: com.Base}, "mul")
 	if err != nil {
 		return nil, err
 	}
@@ -224,7 +225,7 @@ func (c *ContractManage) NewAddPlonk(ctx context.Context) (*kzg.PlonkVerifier, e
 	if err != nil {
 		return nil, err
 	}
-	faddr, err := bi.Get(&bind.CallOpts{From: Base}, "add")
+	faddr, err := bi.Get(&bind.CallOpts{From: com.Base}, "add")
 	if err != nil {
 		return nil, err
 	}
@@ -242,7 +243,7 @@ func (c *ContractManage) NewEProof(ctx context.Context) (*eproof.EProof, error) 
 	if err != nil {
 		return nil, err
 	}
-	faddr, err := bi.Get(&bind.CallOpts{From: Base}, "eproof")
+	faddr, err := bi.Get(&bind.CallOpts{From: com.Base}, "eproof")
 	if err != nil {
 		return nil, err
 	}
@@ -260,7 +261,7 @@ func (c *ContractManage) NewEVerify(ctx context.Context) (*everify.EVerify, erro
 	if err != nil {
 		return nil, err
 	}
-	faddr, err := bi.Get(&bind.CallOpts{From: Base}, "everify")
+	faddr, err := bi.Get(&bind.CallOpts{From: com.Base}, "everify")
 	if err != nil {
 		return nil, err
 	}
@@ -278,7 +279,7 @@ func (c *ContractManage) NewGPU(ctx context.Context) (*gpu.GPU, error) {
 	if err != nil {
 		return nil, err
 	}
-	gaddr, err := bi.Get(&bind.CallOpts{From: Base}, "gpu")
+	gaddr, err := bi.Get(&bind.CallOpts{From: com.Base}, "gpu")
 	if err != nil {
 		return nil, err
 	}
@@ -296,7 +297,7 @@ func (c *ContractManage) NewModel(ctx context.Context) (*model.Model, error) {
 	if err != nil {
 		return nil, err
 	}
-	maddr, err := bi.Get(&bind.CallOpts{From: Base}, "model")
+	maddr, err := bi.Get(&bind.CallOpts{From: com.Base}, "model")
 	if err != nil {
 		return nil, err
 	}
@@ -314,7 +315,7 @@ func (c *ContractManage) NewSpace(ctx context.Context) (*space.Space, error) {
 	if err != nil {
 		return nil, err
 	}
-	aaddr, err := bi.Get(&bind.CallOpts{From: Base}, "space")
+	aaddr, err := bi.Get(&bind.CallOpts{From: com.Base}, "space")
 	if err != nil {
 		return nil, err
 	}

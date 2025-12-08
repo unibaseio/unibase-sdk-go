@@ -1,4 +1,4 @@
-package contract
+package common
 
 import (
 	"encoding/hex"

@@ -7,15 +7,16 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/MOSSV2/dimo-sdk-go/contract/go/eproof"
-	"github.com/MOSSV2/dimo-sdk-go/contract/go/everify"
-	"github.com/MOSSV2/dimo-sdk-go/contract/go/gpu"
-	"github.com/MOSSV2/dimo-sdk-go/contract/go/model"
-	"github.com/MOSSV2/dimo-sdk-go/contract/go/node"
-	"github.com/MOSSV2/dimo-sdk-go/contract/go/piece"
-	"github.com/MOSSV2/dimo-sdk-go/contract/go/reward"
-	"github.com/MOSSV2/dimo-sdk-go/contract/go/rsproof"
-	"github.com/MOSSV2/dimo-sdk-go/contract/go/space"
+	com "github.com/MOSSV2/dimo-sdk-go/contract/common"
+	"github.com/MOSSV2/dimo-sdk-go/contract/v1/go/eproof"
+	"github.com/MOSSV2/dimo-sdk-go/contract/v1/go/everify"
+	"github.com/MOSSV2/dimo-sdk-go/contract/v1/go/gpu"
+	"github.com/MOSSV2/dimo-sdk-go/contract/v1/go/model"
+	"github.com/MOSSV2/dimo-sdk-go/contract/v1/go/node"
+	"github.com/MOSSV2/dimo-sdk-go/contract/v1/go/piece"
+	"github.com/MOSSV2/dimo-sdk-go/contract/v1/go/reward"
+	"github.com/MOSSV2/dimo-sdk-go/contract/v1/go/rsproof"
+	"github.com/MOSSV2/dimo-sdk-go/contract/v1/go/space"
 	"github.com/MOSSV2/dimo-sdk-go/lib/types"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -30,7 +31,7 @@ func (c *ContractManage) GetInstAddr(ctx context.Context, typ string) (common.Ad
 		return common.Address{}, err
 	}
 
-	return bi.Get(&bind.CallOpts{From: Base}, typ)
+	return bi.Get(&bind.CallOpts{From: com.Base}, typ)
 }
 
 func (c *ContractManage) getOrder(count, pcnt uint64) (uint8, error) {
@@ -41,7 +42,7 @@ func (c *ContractManage) getOrder(count, pcnt uint64) (uint8, error) {
 	if err != nil {
 		return 0, err
 	}
-	return ri.GetOrder(&bind.CallOpts{From: Base}, count, pcnt)
+	return ri.GetOrder(&bind.CallOpts{From: com.Base}, count, pcnt)
 }
 
 func GetOrder(count, pcnt uint64) (uint8, uint64) {
@@ -79,7 +80,7 @@ func (c *ContractManage) choose(addr common.Address, seed [32]byte, count, pcnt 
 	if err != nil {
 		return 0, err
 	}
-	return ri.Choose(&bind.CallOpts{From: Base}, addr, seed, count, pcnt, i)
+	return ri.Choose(&bind.CallOpts{From: com.Base}, addr, seed, count, pcnt, i)
 }
 
 func Choose(addr common.Address, seed [32]byte, count, pcnt uint64, index uint64) uint64 {
@@ -117,7 +118,7 @@ func (c *ContractManage) GetEpochBlocks() (uint64, error) {
 		return 0, err
 	}
 
-	return ei.Slots(&bind.CallOpts{From: Base})
+	return ei.Slots(&bind.CallOpts{From: com.Base})
 }
 
 func (c *ContractManage) GetEpoch() (uint64, error) {
@@ -129,7 +130,7 @@ func (c *ContractManage) GetEpoch() (uint64, error) {
 		return 0, err
 	}
 
-	return ei.Current(&bind.CallOpts{From: Base})
+	return ei.Current(&bind.CallOpts{From: com.Base})
 }
 
 func (c *ContractManage) GetEpochInfo(_epoch uint64) (*big.Int, [32]byte, error) {
@@ -141,7 +142,7 @@ func (c *ContractManage) GetEpochInfo(_epoch uint64) (*big.Int, [32]byte, error)
 		return nil, [32]byte{}, err
 	}
 
-	return ei.GetEpoch(&bind.CallOpts{From: Base}, _epoch)
+	return ei.GetEpoch(&bind.CallOpts{From: com.Base}, _epoch)
 }
 
 func (c *ContractManage) CheckNode(addr common.Address, _typ uint8) error {
@@ -158,7 +159,7 @@ func (c *ContractManage) CheckNode(addr common.Address, _typ uint8) error {
 }
 
 func (c *ContractManage) GetPieceSerial(_pn string) (uint64, error) {
-	pnb, err := G1StringInSolidity(_pn)
+	pnb, err := com.G1StringInSolidity(_pn)
 	if err != nil {
 		return 0, err
 	}
@@ -168,11 +169,11 @@ func (c *ContractManage) GetPieceSerial(_pn string) (uint64, error) {
 	if err != nil {
 		return 0, err
 	}
-	return gi.GetPIndex(&bind.CallOpts{From: Base}, pnb)
+	return gi.GetPIndex(&bind.CallOpts{From: com.Base}, pnb)
 }
 
 func (c *ContractManage) GetReplicaSerial(_pn string) (uint64, error) {
-	pnb, err := G1StringInSolidity(_pn)
+	pnb, err := com.G1StringInSolidity(_pn)
 	if err != nil {
 		return 0, err
 	}
@@ -182,7 +183,7 @@ func (c *ContractManage) GetReplicaSerial(_pn string) (uint64, error) {
 	if err != nil {
 		return 0, err
 	}
-	return gi.GetRIndex(&bind.CallOpts{From: Base}, pnb)
+	return gi.GetRIndex(&bind.CallOpts{From: com.Base}, pnb)
 }
 
 func (c *ContractManage) GetPiece(_pi uint64) (piece.IPiecePieceInfo, error) {
@@ -192,7 +193,7 @@ func (c *ContractManage) GetPiece(_pi uint64) (piece.IPiecePieceInfo, error) {
 	if err != nil {
 		return piece.IPiecePieceInfo{}, err
 	}
-	pb, err := fi.GetPiece(&bind.CallOpts{From: Base}, _pi)
+	pb, err := fi.GetPiece(&bind.CallOpts{From: com.Base}, _pi)
 	if err != nil {
 		return piece.IPiecePieceInfo{}, err
 	}
@@ -206,7 +207,7 @@ func (c *ContractManage) GetReplica(_ri uint64) (piece.IPieceReplicaInfo, error)
 	if err != nil {
 		return piece.IPieceReplicaInfo{}, err
 	}
-	pb, err := fi.GetReplica(&bind.CallOpts{From: Base}, _ri)
+	pb, err := fi.GetReplica(&bind.CallOpts{From: com.Base}, _ri)
 	if err != nil {
 		return piece.IPieceReplicaInfo{}, err
 	}
@@ -221,7 +222,7 @@ func (c *ContractManage) GetMinPledge(_typ uint8) (*big.Int, error) {
 	if err != nil {
 		return nil, err
 	}
-	return ni.GetMinPledge(&bind.CallOpts{From: Base}, _typ)
+	return ni.GetMinPledge(&bind.CallOpts{From: com.Base}, _typ)
 }
 
 func (c *ContractManage) GetPledgeInfo(addr common.Address, _typ uint8) (node.INodePledgeInfo, error) {
@@ -269,7 +270,7 @@ func (c *ContractManage) GetStoreReplica(_a common.Address, _ri uint64) (uint64,
 	if err != nil {
 		return 0, err
 	}
-	return fi.GetSRAt(&bind.CallOpts{From: Base}, _a, _ri)
+	return fi.GetSRAt(&bind.CallOpts{From: com.Base}, _a, _ri)
 }
 
 func (c *ContractManage) GetRSChalInfo(_pi uint64, _pri uint8) (rsproof.IRSProofProofInfo, error) {
@@ -280,7 +281,7 @@ func (c *ContractManage) GetRSChalInfo(_pi uint64, _pri uint8) (rsproof.IRSProof
 		return rsproof.IRSProofProofInfo{}, err
 	}
 
-	return rsp.GetProof(&bind.CallOpts{From: Base}, _pi, _pri)
+	return rsp.GetProof(&bind.CallOpts{From: com.Base}, _pi, _pri)
 }
 
 func (c *ContractManage) GetRSMinTime() (uint64, error) {
@@ -291,7 +292,7 @@ func (c *ContractManage) GetRSMinTime() (uint64, error) {
 		return 0, err
 	}
 
-	t, err := rsp.MinProveTime(&bind.CallOpts{From: Base})
+	t, err := rsp.MinProveTime(&bind.CallOpts{From: com.Base})
 	if err != nil {
 		return 0, err
 	}
@@ -307,7 +308,7 @@ func (c *ContractManage) GetEpochChalInfo(_a common.Address, _ep uint64) (eproof
 		return eproof.IEProofProofInfo{}, err
 	}
 
-	return ep.GetEProof(&bind.CallOpts{From: Base}, _a, _ep)
+	return ep.GetEProof(&bind.CallOpts{From: com.Base}, _a, _ep)
 }
 
 func (c *ContractManage) GetEpochChalDetail(_a common.Address, _ep uint64) (everify.IEVerifyCInfo, error) {
@@ -318,7 +319,7 @@ func (c *ContractManage) GetEpochChalDetail(_a common.Address, _ep uint64) (ever
 		return everify.IEVerifyCInfo{}, err
 	}
 
-	return ep.GetCInfo(&bind.CallOpts{From: Base}, _a, _ep)
+	return ep.GetCInfo(&bind.CallOpts{From: com.Base}, _a, _ep)
 }
 
 func (c *ContractManage) GetEProofMinTime() (uint64, error) {
@@ -329,7 +330,7 @@ func (c *ContractManage) GetEProofMinTime() (uint64, error) {
 		return 0, err
 	}
 
-	t, err := rsp.MinProveTime(&bind.CallOpts{From: Base})
+	t, err := rsp.MinProveTime(&bind.CallOpts{From: com.Base})
 	if err != nil {
 		return 0, err
 	}
@@ -408,7 +409,7 @@ func (c *ContractManage) GetGPUIndex(_gn string) (uint64, error) {
 	if err != nil {
 		return 0, err
 	}
-	return gi.GetIndex(&bind.CallOpts{From: Base}, _gn)
+	return gi.GetIndex(&bind.CallOpts{From: com.Base}, _gn)
 }
 
 func (c *ContractManage) GetGPUInfo(_gi uint64) (gpu.IGPUInfo, error) {
@@ -418,7 +419,7 @@ func (c *ContractManage) GetGPUInfo(_gi uint64) (gpu.IGPUInfo, error) {
 	if err != nil {
 		return gpu.IGPUInfo{}, err
 	}
-	return gi.GetGPU(&bind.CallOpts{From: Base}, _gi)
+	return gi.GetGPU(&bind.CallOpts{From: com.Base}, _gi)
 }
 
 func (c *ContractManage) GetGPUOwner(_gi uint64) (common.Address, error) {
@@ -428,7 +429,7 @@ func (c *ContractManage) GetGPUOwner(_gi uint64) (common.Address, error) {
 	if err != nil {
 		return common.Address{}, err
 	}
-	return gi.GetOwner(&bind.CallOpts{From: Base}, _gi)
+	return gi.GetOwner(&bind.CallOpts{From: com.Base}, _gi)
 }
 
 func (c *ContractManage) GetModelIndex(_mn string) (uint64, error) {
@@ -438,7 +439,7 @@ func (c *ContractManage) GetModelIndex(_mn string) (uint64, error) {
 	if err != nil {
 		return 0, err
 	}
-	return mi.GetIndex(&bind.CallOpts{From: Base}, _mn)
+	return mi.GetIndex(&bind.CallOpts{From: com.Base}, _mn)
 }
 
 func (c *ContractManage) GetModelInfo(_mi uint64) (model.IModelInfo, error) {
@@ -448,7 +449,7 @@ func (c *ContractManage) GetModelInfo(_mi uint64) (model.IModelInfo, error) {
 	if err != nil {
 		return model.IModelInfo{}, err
 	}
-	return mi.GetModel(&bind.CallOpts{From: Base}, _mi)
+	return mi.GetModel(&bind.CallOpts{From: com.Base}, _mi)
 }
 
 func (c *ContractManage) GetSpaceIndex(_mn string) (uint64, error) {
@@ -458,7 +459,7 @@ func (c *ContractManage) GetSpaceIndex(_mn string) (uint64, error) {
 	if err != nil {
 		return 0, err
 	}
-	return si.GetIndex(&bind.CallOpts{From: Base}, _mn)
+	return si.GetIndex(&bind.CallOpts{From: com.Base}, _mn)
 }
 
 func (c *ContractManage) GetSpaceInfo(_mi uint64) (space.ISpaceInfo, error) {
@@ -468,7 +469,7 @@ func (c *ContractManage) GetSpaceInfo(_mi uint64) (space.ISpaceInfo, error) {
 	if err != nil {
 		return space.ISpaceInfo{}, err
 	}
-	return si.GetSpace(&bind.CallOpts{From: Base}, _mi)
+	return si.GetSpace(&bind.CallOpts{From: com.Base}, _mi)
 }
 
 func (c *ContractManage) CheckBalance(addr common.Address) error {

@@ -7,6 +7,7 @@ import (
 	"math/big"
 	"time"
 
+	com "github.com/MOSSV2/dimo-sdk-go/contract/common"
 	"github.com/MOSSV2/dimo-sdk-go/lib/bls"
 	"github.com/MOSSV2/dimo-sdk-go/lib/types"
 	"github.com/MOSSV2/dimo-sdk-go/lib/utils"
@@ -33,11 +34,11 @@ func (c *ContractManage) Set(_typ string, ca common.Address) error {
 		return err
 	}
 
-	err = checkTx(c.RPC, tx.Hash())
+	err = com.CheckTx(c.RPC, tx.Hash())
 	if err != nil {
 		return err
 	}
-	logger.Debug(_typ, " set success to: ", ca.String())
+	com.Logger.Debug(_typ, " set success to: ", ca.String())
 	return nil
 }
 
@@ -58,7 +59,7 @@ func (c *ContractManage) UpdateEpoch() (uint64, error) {
 	if err != nil {
 		return 0, err
 	}
-	err = checkTx(c.RPC, tx.Hash())
+	err = com.CheckTx(c.RPC, tx.Hash())
 	if err != nil {
 		return 0, err
 	}
@@ -87,7 +88,7 @@ func (c *ContractManage) RegisterNode(_typ uint8, val *big.Int) error {
 	if val == nil {
 		_, err = ni.Check(&bind.CallOpts{From: au.From}, au.From, _typ)
 		if err == nil {
-			logger.Debugf("%s already pledge enough money in type %d", au.From, _typ)
+			com.Logger.Debugf("%s already pledge enough money in type %d", au.From, _typ)
 			return nil
 		}
 
@@ -106,7 +107,7 @@ func (c *ContractManage) RegisterNode(_typ uint8, val *big.Int) error {
 			pval.Sub(pval, pinfo.Value)
 			val = pval
 		} else {
-			logger.Debug("no need more pledge")
+			com.Logger.Debug("no need more pledge")
 			return nil
 		}
 	}
@@ -115,12 +116,12 @@ func (c *ContractManage) RegisterNode(_typ uint8, val *big.Int) error {
 		return fmt.Errorf("negative value")
 	}
 
-	logger.Debug("register node: ", au.From, val)
+	com.Logger.Debug("register node: ", au.From, val)
 	tx, err := ti.IncreaseAllowance(au, c.BankAddr, val)
 	if err != nil {
 		return err
 	}
-	err = checkTx(c.RPC, tx.Hash())
+	err = com.CheckTx(c.RPC, tx.Hash())
 	if err != nil {
 		return err
 	}
@@ -128,7 +129,7 @@ func (c *ContractManage) RegisterNode(_typ uint8, val *big.Int) error {
 	if err != nil {
 		return err
 	}
-	err = checkTx(c.RPC, tx.Hash())
+	err = com.CheckTx(c.RPC, tx.Hash())
 	if err != nil {
 		return err
 	}
@@ -137,7 +138,7 @@ func (c *ContractManage) RegisterNode(_typ uint8, val *big.Int) error {
 }
 
 func (c *ContractManage) AddPiece(pc types.PieceCore) (string, error) {
-	logger.Debug("add piece: ", pc)
+	com.Logger.Debug("add piece: ", pc)
 	ctx, cancle := context.WithTimeout(context.TODO(), 3*time.Minute)
 	defer cancle()
 
@@ -148,10 +149,10 @@ func (c *ContractManage) AddPiece(pc types.PieceCore) (string, error) {
 
 	if pc.Expire == 0 {
 		pc.Start = ce
-		pc.Expire = ce + uint64(DefaultStoreEpoch)
+		pc.Expire = ce + uint64(com.DefaultStoreEpoch)
 	}
 	if pc.Price == nil {
-		pc.Price = big.NewInt(int64(DefaultReplicaPrice))
+		pc.Price = big.NewInt(int64(com.DefaultReplicaPrice))
 	}
 
 	_size := 1 + (pc.Size-1)/(31*int64(pc.Policy.K))
@@ -159,7 +160,7 @@ func (c *ContractManage) AddPiece(pc types.PieceCore) (string, error) {
 
 	val := big.NewInt(int64(pc.Expire-pc.Start) * _size)
 	val.Mul(val, pc.Price)
-	val.Add(val, big.NewInt(int64(DefaultStreamPrice)))
+	val.Add(val, big.NewInt(int64(com.DefaultStreamPrice)))
 	val.Mul(val, big.NewInt(int64(pc.Policy.N)))
 
 	au, err := c.MakeAuth()
@@ -178,7 +179,7 @@ func (c *ContractManage) AddPiece(pc types.PieceCore) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	err = checkTx(c.RPC, tx.Hash())
+	err = com.CheckTx(c.RPC, tx.Hash())
 	if err != nil {
 		return "", err
 	}
@@ -188,18 +189,18 @@ func (c *ContractManage) AddPiece(pc types.PieceCore) (string, error) {
 		return "", err
 	}
 
-	pb, err := G1StringInSolidity(pc.Name)
+	pb, err := com.G1StringInSolidity(pc.Name)
 	if err != nil {
 		return "", err
 	}
 
-	logger.Debug("add piece: ", pc)
+	com.Logger.Debug("add piece: ", pc)
 	fmt.Println("submitpiece1: ", c.BalanceOf(au.From))
 	tx, err = fi.AddPiece(au, pb, pc.Price, uint64(pc.Size), pc.Expire, pc.Policy.N, pc.Policy.K, pc.Streamer)
 	if err != nil {
 		return "", err
 	}
-	err = checkTx(c.RPC, tx.Hash())
+	err = com.CheckTx(c.RPC, tx.Hash())
 	if err != nil {
 		return "", err
 	}
@@ -210,8 +211,8 @@ func (c *ContractManage) AddPiece(pc types.PieceCore) (string, error) {
 }
 
 func (c *ContractManage) AddReplica(rc types.ReplicaCore, pf []byte) error {
-	logger.Debug("add replica: ", rc)
-	rb, err := G1StringInSolidity(rc.Name)
+	com.Logger.Debug("add replica: ", rc)
+	rb, err := com.G1StringInSolidity(rc.Name)
 	if err != nil {
 		return err
 	}
@@ -227,7 +228,7 @@ func (c *ContractManage) AddReplica(rc types.ReplicaCore, pf []byte) error {
 		return err
 	}
 
-	pbyte, err := G1StringInSolidity(rc.Piece)
+	pbyte, err := com.G1StringInSolidity(rc.Piece)
 	if err != nil {
 		return err
 	}
@@ -250,13 +251,13 @@ func (c *ContractManage) AddReplica(rc types.ReplicaCore, pf []byte) error {
 	}
 
 	gtoken := c.BalanceOf(au.From)
-	logger.Debug("add replica: ", _pi, rc)
+	com.Logger.Debug("add replica: ", _pi, rc)
 	fmt.Println("submitreplica0: ", c.BalanceOf(au.From))
 	tx, err := fi.AddReplica(au, rb, _pi, rc.Index, pf)
 	if err != nil {
 		return err
 	}
-	err = checkTx(c.RPC, tx.Hash())
+	err = com.CheckTx(c.RPC, tx.Hash())
 	if err != nil {
 		return err
 	}
@@ -267,7 +268,7 @@ func (c *ContractManage) AddReplica(rc types.ReplicaCore, pf []byte) error {
 }
 
 func (c *ContractManage) UpdateStore(store common.Address) error {
-	logger.Debug("update store: ", store)
+	com.Logger.Debug("update store: ", store)
 
 	ctx, cancle := context.WithTimeout(context.TODO(), 1*time.Minute)
 	defer cancle()
@@ -286,7 +287,7 @@ func (c *ContractManage) UpdateStore(store common.Address) error {
 		return err
 	}
 
-	err = checkTx(c.RPC, tx.Hash())
+	err = com.CheckTx(c.RPC, tx.Hash())
 	if err != nil {
 		return err
 	}
@@ -308,11 +309,11 @@ func (c *ContractManage) ChallengeRS(_pn, _rn string, _pri uint8) error {
 		return err
 	}
 
-	tx, err := ti.IncreaseAllowance(au, c.BankAddr, big.NewInt(int64(DefaultPenalty)))
+	tx, err := ti.IncreaseAllowance(au, c.BankAddr, big.NewInt(int64(com.DefaultPenalty)))
 	if err != nil {
 		return err
 	}
-	err = checkTx(c.RPC, tx.Hash())
+	err = com.CheckTx(c.RPC, tx.Hash())
 	if err != nil {
 		return err
 	}
@@ -321,7 +322,7 @@ func (c *ContractManage) ChallengeRS(_pn, _rn string, _pri uint8) error {
 	if err != nil {
 		return err
 	}
-	pname, err := G1StringInSolidity(_pn)
+	pname, err := com.G1StringInSolidity(_pn)
 	if err != nil {
 		pname, err = hex.DecodeString(_pn)
 		if err != nil {
@@ -329,7 +330,7 @@ func (c *ContractManage) ChallengeRS(_pn, _rn string, _pri uint8) error {
 		}
 	}
 
-	rname, err := G1StringInSolidity(_rn)
+	rname, err := com.G1StringInSolidity(_rn)
 	if err != nil {
 		rname, err = hex.DecodeString(_rn)
 		if err != nil {
@@ -337,13 +338,13 @@ func (c *ContractManage) ChallengeRS(_pn, _rn string, _pri uint8) error {
 		}
 	}
 
-	logger.Debug("challenge rs proof: ", _rn, _pn, _pri)
+	com.Logger.Debug("challenge rs proof: ", _rn, _pn, _pri)
 	tx, err = rsp.Challenge(au, pname, rname, _pri)
 	if err != nil {
 		return err
 	}
 
-	err = checkTx(c.RPC, tx.Hash())
+	err = com.CheckTx(c.RPC, tx.Hash())
 	if err != nil {
 		return err
 	}
@@ -364,12 +365,12 @@ func (c *ContractManage) ProveRS(_pn, _rn string, _pri uint8, _pf []byte) error 
 		return err
 	}
 
-	pname, err := G1StringInSolidity(_pn)
+	pname, err := com.G1StringInSolidity(_pn)
 	if err != nil {
 		return err
 	}
 
-	rname, err := G1StringInSolidity(_rn)
+	rname, err := com.G1StringInSolidity(_rn)
 	if err != nil {
 		return err
 	}
@@ -379,7 +380,7 @@ func (c *ContractManage) ProveRS(_pn, _rn string, _pri uint8, _pf []byte) error 
 		return err
 	}
 
-	err = checkTx(c.RPC, tx.Hash())
+	err = com.CheckTx(c.RPC, tx.Hash())
 	if err != nil {
 		return err
 	}
@@ -400,7 +401,7 @@ func (c *ContractManage) CheckRSChallenge(_pn, _rn string, _pri uint8) error {
 		return err
 	}
 
-	pname, err := G1StringInSolidity(_pn)
+	pname, err := com.G1StringInSolidity(_pn)
 	if err != nil {
 		pname, err = hex.DecodeString(_pn)
 		if err != nil {
@@ -408,7 +409,7 @@ func (c *ContractManage) CheckRSChallenge(_pn, _rn string, _pri uint8) error {
 		}
 	}
 
-	rname, err := G1StringInSolidity(_rn)
+	rname, err := com.G1StringInSolidity(_rn)
 	if err != nil {
 		rname, err = hex.DecodeString(_rn)
 		if err != nil {
@@ -436,7 +437,7 @@ func (c *ContractManage) CheckRSChallenge(_pn, _rn string, _pri uint8) error {
 		return err
 	}
 
-	err = checkTx(c.RPC, tx.Hash())
+	err = com.CheckTx(c.RPC, tx.Hash())
 	if err != nil {
 		return err
 	}
@@ -457,20 +458,20 @@ func (c *ContractManage) SubmitProof(_ep uint64, _pf bls.EpochProof) error {
 		return err
 	}
 
-	_sum := G1InSolidity(_pf.Sum)
-	_pfb := G1InSolidity(_pf.H)
-	_frb := FrInSolidity(_pf.ClaimedValue)
+	_sum := com.G1InSolidity(_pf.Sum)
+	_pfb := com.G1InSolidity(_pf.H)
+	_frb := com.FrInSolidity(_pf.ClaimedValue)
 	_pfb = append(_pfb, _frb...)
 
 	gtoken := c.BalanceOf(au.From)
-	logger.Debug("submit epoch proof: ", au.From, _ep)
+	com.Logger.Debug("submit epoch proof: ", au.From, _ep)
 	fmt.Println("submitproof0: ", c.BalanceOf(au.From))
 	tx, err := pi.Submit(au, _ep, _sum, _pfb)
 	if err != nil {
 		return err
 	}
 
-	err = checkTx(c.RPC, tx.Hash())
+	err = com.CheckTx(c.RPC, tx.Hash())
 	if err != nil {
 		return err
 	}
@@ -493,11 +494,11 @@ func (c *ContractManage) ChallengeKZG(addr common.Address, _ep uint64) error {
 		return err
 	}
 
-	tx, err := ti.IncreaseAllowance(au, c.BankAddr, big.NewInt(int64(DefaultPenalty)))
+	tx, err := ti.IncreaseAllowance(au, c.BankAddr, big.NewInt(int64(com.DefaultPenalty)))
 	if err != nil {
 		return err
 	}
-	err = checkTx(c.RPC, tx.Hash())
+	err = com.CheckTx(c.RPC, tx.Hash())
 	if err != nil {
 		return err
 	}
@@ -507,13 +508,13 @@ func (c *ContractManage) ChallengeKZG(addr common.Address, _ep uint64) error {
 		return err
 	}
 
-	logger.Debug("challenge eproof: ", addr, _ep)
+	com.Logger.Debug("challenge eproof: ", addr, _ep)
 	tx, err = pi.ChalKZG(au, addr, _ep)
 	if err != nil {
 		return err
 	}
 
-	err = checkTx(c.RPC, tx.Hash())
+	err = com.CheckTx(c.RPC, tx.Hash())
 	if err != nil {
 		return err
 	}
@@ -546,7 +547,7 @@ func (c *ContractManage) ProveKZG(_ep uint64, _wroot []byte, _pf []byte) error {
 		return err
 	}
 
-	err = checkTx(c.RPC, tx.Hash())
+	err = com.CheckTx(c.RPC, tx.Hash())
 	if err != nil {
 		return err
 	}
@@ -568,11 +569,11 @@ func (c *ContractManage) ChallengeSum(addr common.Address, _ep uint64, _qIndex u
 	}
 
 	if len(sum) > 0 {
-		tx, err := ti.IncreaseAllowance(au, c.BankAddr, big.NewInt(int64(DefaultPenalty)))
+		tx, err := ti.IncreaseAllowance(au, c.BankAddr, big.NewInt(int64(com.DefaultPenalty)))
 		if err != nil {
 			return err
 		}
-		err = checkTx(c.RPC, tx.Hash())
+		err = com.CheckTx(c.RPC, tx.Hash())
 		if err != nil {
 			return err
 		}
@@ -584,30 +585,30 @@ func (c *ContractManage) ChallengeSum(addr common.Address, _ep uint64, _qIndex u
 	}
 
 	if len(sum) > 0 {
-		_sum, err := G1StringInSolidity(sum)
+		_sum, err := com.G1StringInSolidity(sum)
 		if err != nil {
 			_sum, err = hex.DecodeString(sum)
 			if err != nil {
 				return err
 			}
 		}
-		logger.Debug("challenge eproof sum0: ", addr, _ep)
+		com.Logger.Debug("challenge eproof sum0: ", addr, _ep)
 		tx, err := pi.Challenge(au, addr, _ep, _sum)
 		if err != nil {
 			return err
 		}
-		err = checkTx(c.RPC, tx.Hash())
+		err = com.CheckTx(c.RPC, tx.Hash())
 		if err != nil {
 			return err
 		}
 	} else {
-		logger.Debug("challenge eproof sum: ", addr, _ep, _qIndex)
+		com.Logger.Debug("challenge eproof sum: ", addr, _ep, _qIndex)
 		tx, err := pi.ChalCom(au, addr, _ep, _qIndex)
 		if err != nil {
 			return err
 		}
 
-		err = checkTx(c.RPC, tx.Hash())
+		err = com.CheckTx(c.RPC, tx.Hash())
 		if err != nil {
 			return err
 		}
@@ -630,11 +631,11 @@ func (c *ContractManage) ProveSum(_ep uint64, coms []bls.G1, _pf []byte) error {
 		return err
 	}
 
-	tx, err := ti.IncreaseAllowance(au, c.BankAddr, big.NewInt(int64(DefaultPenalty)))
+	tx, err := ti.IncreaseAllowance(au, c.BankAddr, big.NewInt(int64(com.DefaultPenalty)))
 	if err != nil {
 		return err
 	}
-	err = checkTx(c.RPC, tx.Hash())
+	err = com.CheckTx(c.RPC, tx.Hash())
 	if err != nil {
 		return err
 	}
@@ -646,16 +647,16 @@ func (c *ContractManage) ProveSum(_ep uint64, coms []bls.G1, _pf []byte) error {
 
 	_coms := make([][]byte, len(coms))
 	for i := 0; i < len(coms); i++ {
-		_coms[i] = G1InSolidity(coms[i])
+		_coms[i] = com.G1InSolidity(coms[i])
 	}
 
-	logger.Debug("prove eproof sum: ", au.From, _ep)
+	com.Logger.Debug("prove eproof sum: ", au.From, _ep)
 	tx, err = pi.ProveCom(au, _ep, _coms, _pf)
 	if err != nil {
 		return err
 	}
 
-	err = checkTx(c.RPC, tx.Hash())
+	err = com.CheckTx(c.RPC, tx.Hash())
 	if err != nil {
 		return err
 	}
@@ -677,13 +678,13 @@ func (c *ContractManage) ChallengeOne(addr common.Address, _ep uint64, _qIndex u
 		return err
 	}
 
-	logger.Debug("challenge eproof one: ", addr, _ep, _qIndex)
+	com.Logger.Debug("challenge eproof one: ", addr, _ep, _qIndex)
 	tx, err := pi.ChalOne(au, addr, _ep, _qIndex)
 	if err != nil {
 		return err
 	}
 
-	err = checkTx(c.RPC, tx.Hash())
+	err = com.CheckTx(c.RPC, tx.Hash())
 	if err != nil {
 		return err
 	}
@@ -691,7 +692,7 @@ func (c *ContractManage) ChallengeOne(addr common.Address, _ep uint64, _qIndex u
 	return nil
 }
 
-func (c *ContractManage) ProveOne(_ep uint64, com bls.G1, _pf []byte) error {
+func (c *ContractManage) ProveOne(_ep uint64, _com bls.G1, _pf []byte) error {
 	ctx, cancle := context.WithTimeout(context.TODO(), 3*time.Minute)
 	defer cancle()
 
@@ -705,14 +706,14 @@ func (c *ContractManage) ProveOne(_ep uint64, com bls.G1, _pf []byte) error {
 		return err
 	}
 
-	_com := G1InSolidity(com)
-	logger.Debug("prove eproof one: ", au.From, _ep)
-	tx, err := pi.ProveOne(au, _ep, _com, _pf)
+	_commit := com.G1InSolidity(_com)
+	com.Logger.Debug("prove eproof one: ", au.From, _ep)
+	tx, err := pi.ProveOne(au, _ep, _commit, _pf)
 	if err != nil {
 		return err
 	}
 
-	err = checkTx(c.RPC, tx.Hash())
+	err = com.CheckTx(c.RPC, tx.Hash())
 	if err != nil {
 		return err
 	}
@@ -734,13 +735,13 @@ func (c *ContractManage) CheckEpochChallenge(addr common.Address, _ep uint64) er
 		return err
 	}
 
-	logger.Debug("check eproof: ", addr, _ep)
+	com.Logger.Debug("check eproof: ", addr, _ep)
 	tx, err := ep.Check(au, addr, _ep)
 	if err != nil {
 		return err
 	}
 
-	err = checkTx(c.RPC, tx.Hash())
+	err = com.CheckTx(c.RPC, tx.Hash())
 	if err != nil {
 		return err
 	}
@@ -759,7 +760,7 @@ func (c *ContractManage) TestProveRS(rsn, rsk uint8, pub []*big.Int, _pf []byte)
 		return err
 	}
 
-	vt, err := rsp.GetVKRoot(&bind.CallOpts{From: Base}, rsn, rsk)
+	vt, err := rsp.GetVKRoot(&bind.CallOpts{From: com.Base}, rsn, rsk)
 	if err != nil {
 		return err
 	}
@@ -773,7 +774,7 @@ func (c *ContractManage) TestProveRS(rsn, rsk uint8, pub []*big.Int, _pf []byte)
 		return err
 	}
 
-	ok, err := rsv.Verify(&bind.CallOpts{From: Base}, _pf, pub)
+	ok, err := rsv.Verify(&bind.CallOpts{From: com.Base}, _pf, pub)
 	if err != nil {
 		return err
 	}
@@ -798,11 +799,11 @@ func (c *ContractManage) TestProveEpoch(_key string, pub []*big.Int, _pf []byte)
 	vt := new(big.Int)
 	switch _key {
 	case "kzg":
-		vt, err = ev.INKZGVK(&bind.CallOpts{From: Base})
+		vt, err = ev.INKZGVK(&bind.CallOpts{From: com.Base})
 	case "mul":
-		vt, err = ev.INMULVK(&bind.CallOpts{From: Base})
+		vt, err = ev.INMULVK(&bind.CallOpts{From: com.Base})
 	case "add":
-		vt, err = ev.INADDVK(&bind.CallOpts{From: Base})
+		vt, err = ev.INADDVK(&bind.CallOpts{From: com.Base})
 	default:
 		return fmt.Errorf("unsupported inner circuit: %s", _key)
 	}
@@ -820,7 +821,7 @@ func (c *ContractManage) TestProveEpoch(_key string, pub []*big.Int, _pf []byte)
 		if err != nil {
 			return err
 		}
-		ok, err := pv.Verify(&bind.CallOpts{From: Base}, _pf, pub)
+		ok, err := pv.Verify(&bind.CallOpts{From: com.Base}, _pf, pub)
 		if err != nil {
 			return err
 		}
@@ -832,7 +833,7 @@ func (c *ContractManage) TestProveEpoch(_key string, pub []*big.Int, _pf []byte)
 		if err != nil {
 			return err
 		}
-		ok, err := pv.Verify(&bind.CallOpts{From: Base}, _pf, pub)
+		ok, err := pv.Verify(&bind.CallOpts{From: com.Base}, _pf, pub)
 		if err != nil {
 			return err
 		}
@@ -844,7 +845,7 @@ func (c *ContractManage) TestProveEpoch(_key string, pub []*big.Int, _pf []byte)
 		if err != nil {
 			return err
 		}
-		ok, err := pv.Verify(&bind.CallOpts{From: Base}, _pf, pub)
+		ok, err := pv.Verify(&bind.CallOpts{From: com.Base}, _pf, pub)
 		if err != nil {
 			return err
 		}
@@ -875,7 +876,7 @@ func (c *ContractManage) Settle(_money *big.Int) error {
 		return err
 	}
 
-	err = checkTx(c.RPC, tx.Hash())
+	err = com.CheckTx(c.RPC, tx.Hash())
 	if err != nil {
 		return err
 	}
@@ -900,7 +901,7 @@ func (c *ContractManage) WithdrawRevenue(_money *big.Int) error {
 		return err
 	}
 
-	err = checkTx(c.RPC, tx.Hash())
+	err = com.CheckTx(c.RPC, tx.Hash())
 	if err != nil {
 		return err
 	}
@@ -925,7 +926,7 @@ func (c *ContractManage) SettleReward(addr common.Address, _ep uint64) error {
 		return err
 	}
 
-	err = checkTx(c.RPC, tx.Hash())
+	err = com.CheckTx(c.RPC, tx.Hash())
 	if err != nil {
 		return err
 	}
@@ -950,7 +951,7 @@ func (c *ContractManage) WithdrawReward(_money *big.Int) error {
 		return err
 	}
 
-	err = checkTx(c.RPC, tx.Hash())
+	err = com.CheckTx(c.RPC, tx.Hash())
 	if err != nil {
 		return err
 	}
@@ -959,7 +960,7 @@ func (c *ContractManage) WithdrawReward(_money *big.Int) error {
 }
 
 func (c *ContractManage) AddModel(mc types.ModelMeta) error {
-	logger.Debug("add model: ", mc)
+	com.Logger.Debug("add model: ", mc)
 	ctx, cancle := context.WithTimeout(context.TODO(), 1*time.Minute)
 	defer cancle()
 	mi, err := c.NewModel(ctx)
@@ -971,18 +972,18 @@ func (c *ContractManage) AddModel(mc types.ModelMeta) error {
 		return err
 	}
 
-	_rt, err := G1StringInSolidity(mc.Hash)
+	_rt, err := com.G1StringInSolidity(mc.Hash)
 	if err != nil {
 		return err
 	}
 
-	logger.Debug("add model: ", mc.Name)
+	com.Logger.Debug("add model: ", mc.Name)
 	tx, err := mi.Add(au, mc.Name, _rt)
 	if err != nil {
 		return err
 	}
 
-	err = checkTx(c.RPC, tx.Hash())
+	err = com.CheckTx(c.RPC, tx.Hash())
 	if err != nil {
 		return err
 	}
@@ -1007,7 +1008,7 @@ func (c *ContractManage) AddGPU(_gn string) error {
 		return err
 	}
 
-	err = checkTx(c.RPC, tx.Hash())
+	err = com.CheckTx(c.RPC, tx.Hash())
 	if err != nil {
 		return err
 	}
@@ -1053,8 +1054,8 @@ func (c *ContractManage) AddSpace(msm types.SpaceMeta) error {
 		return err
 	}
 
-	val := big.NewInt(int64(DefaultSpacePrice))
-	val.Mul(val, big.NewInt(int64(DefaultSpaceEpoch)))
+	val := big.NewInt(int64(com.DefaultSpacePrice))
+	val.Mul(val, big.NewInt(int64(com.DefaultSpaceEpoch)))
 
 	ti, err := c.NewToken(ctx)
 	if err != nil {
@@ -1065,17 +1066,17 @@ func (c *ContractManage) AddSpace(msm types.SpaceMeta) error {
 	if err != nil {
 		return err
 	}
-	err = checkTx(c.RPC, tx.Hash())
+	err = com.CheckTx(c.RPC, tx.Hash())
 	if err != nil {
 		return err
 	}
 
-	tx, err = si.Add(au, msm.Name, _mi, _gi, big.NewInt(int64(DefaultSpacePrice)), ce+uint64(DefaultSpaceEpoch))
+	tx, err = si.Add(au, msm.Name, _mi, _gi, big.NewInt(int64(com.DefaultSpacePrice)), ce+uint64(com.DefaultSpaceEpoch))
 	if err != nil {
 		return err
 	}
 
-	err = checkTx(c.RPC, tx.Hash())
+	err = com.CheckTx(c.RPC, tx.Hash())
 	if err != nil {
 		return err
 	}
@@ -1106,7 +1107,7 @@ func (c *ContractManage) ActivateSpace(sn, root string, pfbyte []byte) error {
 		return err
 	}
 
-	err = checkTx(c.RPC, tx.Hash())
+	err = com.CheckTx(c.RPC, tx.Hash())
 	if err != nil {
 		return err
 	}
@@ -1132,7 +1133,7 @@ func (c *ContractManage) ShutdownSpace(_ai uint64) error {
 		return err
 	}
 
-	err = checkTx(c.RPC, tx.Hash())
+	err = com.CheckTx(c.RPC, tx.Hash())
 	if err != nil {
 		return err
 	}

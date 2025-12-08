@@ -33,20 +33,29 @@ import (
 )
 
 var logger = log.Logger("sdk")
+var ChainType = build.BNBTestnet
 var chaintype = ""
 
 func init() {
 	// local test
-	// os.Setenv("CHAIN_TYPE", build.OPBNBTestnet)
-	checkENV()
-	log.SetLogLevel("DEBUG")
+	//os.Setenv("CHAIN_TYPE", ChainType)
+	CheckENV()
+	logLevel := os.Getenv("LogLevel")
+	if logLevel == "" {
+		logLevel = "DEBUG"
+	}
+	log.SetLogLevel(logLevel)
 }
 
 var ServerURL = build.ServerURL
 
 const InHashID = hash.MIMC_BW6_761
 
-func checkENV() {
+func CheckENV() {
+	ct := os.Getenv("CHAIN_TYPE")
+	if ct == "" {
+		os.Setenv("CHAIN_TYPE", ChainType)
+	}
 	chaintype = build.CheckChain()
 	logger.Warn("connect to chain: ", chaintype)
 }
