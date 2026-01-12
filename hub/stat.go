@@ -2,6 +2,7 @@ package hub
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"strconv"
 	"sync"
@@ -84,15 +85,20 @@ func NewStatManager(db *gorm.DB) *StatManager {
 
 // loadStats loads statistics from database
 func (sm *StatManager) loadStats() (int, error) {
-	var records []types.StatRecord
-	// find the latest 30 records
-	if err := sm.db.Order("day DESC").Limit(30).Find(&records).Error; err != nil {
-		return 0, err
-	}
+	// find the latest 30 day records
+	now := time.Now().UTC()
+	now = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
 
-	logger.Infof("found %d records", len(records))
-
-	for _, record := range records {
+	recordCount := 0
+	for i := 30; i >= 0; i-- {
+		var record types.StatRecord
+		daytime := now.AddDate(0, 0, -i)
+		err := sm.db.Order("id desc").Where("day = ?", daytime).First(&record).Error
+		if err != nil {
+			fmt.Println("no record for day: ", daytime, err)
+			continue
+		}
+		fmt.Println("found record at day: ", daytime, record)
 		day := record.Day.Format("2006-01-02")
 		sm.stats[day] = &types.Stat{
 			Day:           record.Day,
@@ -105,18 +111,43 @@ func (sm *StatManager) loadStats() (int, error) {
 			TotalNeedles:  record.TotalNeedles,
 			TotalVolumes:  record.TotalVolumes,
 		}
+		recordCount++
+		sm.lastDay = daytime
 	}
 
-	// Set last IDs from the most recent record
-	if len(records) == 30 {
-		sm.lastAccountID = records[0].LastAccountID
-		sm.lastBucketID = records[0].LastBucketID
-		sm.lastNeedleID = records[0].LastNeedleID
-		sm.lastVolumeID = records[0].LastVolumeID
-		sm.lastDay = records[0].Day
+	logger.Infof("found %d records", recordCount)
+
+	if recordCount == 0 {
+		return 0, nil
 	}
 
-	return len(records), nil
+	var record types.StatRecord
+	err := sm.db.Order("id desc").Where("day = ?", sm.lastDay).First(&record).Error
+	if err != nil {
+		return 0, nil
+	}
+
+	sm.lastAccountID = record.LastAccountID
+	sm.lastBucketID = record.LastBucketID
+	sm.lastNeedleID = record.LastNeedleID
+	sm.lastVolumeID = record.LastVolumeID
+
+	for sm.lastDay.AddDate(0, 0, 1).Before(now) {
+		sm.lastDay = sm.lastDay.AddDate(0, 0, 1)
+		day := sm.lastDay.Format("2006-01-02")
+		st := &types.Stat{
+			Day:           sm.lastDay,
+			TotalAccounts: record.TotalAccounts,
+			TotalBuckets:  record.TotalBuckets,
+			TotalNeedles:  record.TotalNeedles,
+			TotalVolumes:  record.TotalVolumes,
+		}
+		sm.stats[day] = st
+		recordCount++
+		sm.saveStat(st)
+	}
+
+	return recordCount, nil
 }
 
 // saveStat saves a stat record to database
@@ -137,7 +168,10 @@ func (sm *StatManager) saveStat(stat *types.Stat) error {
 		LastVolumeID:  sm.lastVolumeID,
 	}
 
-	return sm.db.Save(&record).Error
+	// if record for the day exists, update it
+	sm.db.Order("id desc").Where("day = ?", record.Day).Assign(record).FirstOrCreate(&record)
+
+	return nil
 }
 
 // Start initializes the StatManager with historical data and starts the background update routine
@@ -150,7 +184,7 @@ func (sm *StatManager) Start(ctx context.Context) error {
 
 	initStat := os.Getenv("INIT_STAT")
 	// If no stats exist, initialize with historical data
-	if statcount != 30 || initStat != "" {
+	if statcount == 0 || initStat != "" {
 		logger.Warnf("no enough stats found, initializing with historical data")
 		sm.stats = make(map[string]*types.Stat)
 		now := time.Now().UTC()

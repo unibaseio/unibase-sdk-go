@@ -1,27 +1,27 @@
 {
-    "records": [
-        {
-            "timestamp": "2025-12-05 22:08:47",
-            "chain_url": "http://127.0.0.1:8545",
-            "chain_id": 56,
-            "deployments": {
-                "AddVerifier": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-                "EProof": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-                "EProofProxy": "0xc6e7DF5E7b4f2A278906862b61205850344D4e7d",
-                "EVerify": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
-                "EVerifyProxy": "0x3Aa5ebB10DC797CAC828524e59A333d0A371443c",
-                "Epoch": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-                "EpochProxy": "0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e",
-                "KzgVerifier": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
-                "MulVerifier": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
-                "Node": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
-                "NodeProxy": "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0",
-                "Piece": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
-                "PieceProxy": "0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82",
-                "RSOneVerifier": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-                "RSProof": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
-                "RSProofProxy": "0x9A676e781A523b5d0C0e43731313A708CB607508"
-            }
-        }
-    ]
+  "records": [
+    {
+      "timestamp": "2025-12-14 21:23:20",
+      "chain_url": "https://bsc-testnet-dataseed.bnbchain.org",
+      "chain_id": 97,
+      "deployments": {
+        "AddVerifier": "0x37222C0a687079968a039874748218e0C43BFf65",
+        "EProof": "0x3d0d443105dF86aaE1E90eA38fD2A42DcB919157",
+        "EProofProxy": "0xba0F80B3395c8e0722FF92A04aF315ab14Ee5C60",
+        "EVerify": "0xBF6435c54bff7B8E66eBc1948fAa5E169795dD20",
+        "EVerifyProxy": "0xBFFfD0708Ef5CE588622F2961B30D4BA8baD3072",
+        "Epoch": "0x5cE774F80CEc2A86CD760c7641AD47B8625171DD",
+        "EpochProxy": "0xf80Ff1FE31ac5872D0366aCAAF2BDa8a28AE2cA8",
+        "KzgVerifier": "0xE78Eb0B875772E0C464DaAa2054AE8D7F4a7c06A",
+        "MulVerifier": "0x7581C27FC358208F3d64A0cd2E5733290D7C0CD9",
+        "Node": "0x32c8406aB5cf25490B837B235A27F57324611DF2",
+        "NodeProxy": "0x16c2A3634E71eC14e09cafbe67c6aBC06AE06Eb8",
+        "Piece": "0xe252F4bcc9fB291b8C0aA868090e5a9a038fbfc2",
+        "PieceProxy": "0x00CDaB61bc0bd8055D27E770A6Ee9149BCbd4fb7",
+        "RSOneVerifier": "0x8f8aA4BcC6f8A5eA36E8DFB8fCB14efEab5460d9",
+        "RSProof": "0xFd7a5eeF6243243aBA119Dd201A8E6fa74A6C76D",
+        "RSProofProxy": "0xdB8C0bf2B8510f729ce17b7048F98B0F8F757c7A"
+      }
+    }
+  ]
 }

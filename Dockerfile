@@ -2,7 +2,7 @@
 
 ###############################################################################
 # Base build image
-FROM golang:1.22-alpine AS build_base
+FROM golang:1.24-alpine AS build_base
 RUN apk add bash ca-certificates git gcc g++ libc-dev
 
 ENV GO111MODULE=on

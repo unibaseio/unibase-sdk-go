@@ -307,6 +307,54 @@ func UpdateRSProofMinProveTime(client *ethclient.Client, sk string, rsproofProxy
 	return nil
 }
 
+// UpdateRSProofBasePenalty updates the basePenalty for RSProof
+func UpdateRSProofBasePenalty(client *ethclient.Client, sk string, rsproofProxy common.Address, newBasePenalty *big.Int) error {
+	log.Println("\n=== Updating RSProof basePenalty ===")
+
+	au, err := contract.MakeAuth(ChainURL, ChainID, sk)
+	if err != nil {
+		return err
+	}
+
+	rsproofInstance, err := rsproof.NewRSProof(rsproofProxy, client)
+	if err != nil {
+		return fmt.Errorf("failed to create rsproof instance: %w", err)
+	}
+
+	// Get current 
+	current, err := rsproofInstance.BasePenalty(nil)
+	if err != nil {
+		return fmt.Errorf("failed to get current basePenalty: %w", err)
+	}
+	log.Printf("Current RS basePenalty: %s\n", current.String())
+
+	// Update to new
+	tx, err := rsproofInstance.SetBasePenalty(au, newBasePenalty)
+	if err != nil {
+		return fmt.Errorf("failed to set basePenalty: %w", err)
+	}
+
+	if err := contract.CheckTx(ChainURL, tx.Hash()); err != nil {
+		return fmt.Errorf("failed to check transaction: %w", err)
+	}
+
+	log.Printf("Updated RS basePenalty to: %s\n", newBasePenalty.String())
+
+	// Verify the update
+	updated, err := rsproofInstance.BasePenalty(nil)
+	if err != nil {
+		return fmt.Errorf("failed to verify updated basePenalty: %w", err)
+	}
+
+	if updated.Cmp(newBasePenalty) != 0 {
+		return fmt.Errorf("RS basePenalty update verification failed: expected %s, got %s",
+			newBasePenalty.String(), updated.String())
+	}
+
+	log.Printf("RS BasePenalty successfully updated and verified: %s\n", updated.String())
+	return nil
+}
+
 // UpdateEProofMinProveTime updates the minimum prove time for EProof
 func UpdateEProofMinProveTime(client *ethclient.Client, sk string, eproofProxy common.Address, newMinProveTime *big.Int) error {
 	log.Println("\n=== Updating EProof minimum prove time ===")
@@ -352,5 +400,53 @@ func UpdateEProofMinProveTime(client *ethclient.Client, sk string, eproofProxy c
 	}
 
 	log.Printf("E MinProveTime successfully updated and verified: %s\n", updatedMinProveTime.String())
+	return nil
+}
+
+// UpdateEProofBasePenalty updates the basePenalty for EProof
+func UpdateEProofBasePenalty(client *ethclient.Client, sk string, eproofProxy common.Address, newBasePenalty *big.Int) error {
+	log.Println("\n=== Updating EProof basePenalty ===")
+
+	au, err := contract.MakeAuth(ChainURL, ChainID, sk)
+	if err != nil {
+		return err
+	}
+
+	eproofInstance, err := eproof.NewEProof(eproofProxy, client)
+	if err != nil {
+		return fmt.Errorf("failed to create eproof instance: %w", err)
+	}
+
+	// Get current
+	current, err := eproofInstance.BasePenalty(nil)
+	if err != nil {
+		return fmt.Errorf("failed to get current basePenalty: %w", err)
+	}
+	log.Printf("Current E basePenalty: %s\n", current.String())
+
+	// Update to new
+	tx, err := eproofInstance.SetBasePenalty(au, newBasePenalty)
+	if err != nil {
+		return fmt.Errorf("failed to set basePenalty: %w", err)
+	}
+
+	if err := contract.CheckTx(ChainURL, tx.Hash()); err != nil {
+		return fmt.Errorf("failed to check transaction: %w", err)
+	}
+
+	log.Printf("Updated E basePenalty to: %s\n", newBasePenalty.String())
+
+	// Verify the update
+	updated, err := eproofInstance.BasePenalty(nil)
+	if err != nil {
+		return fmt.Errorf("failed to verify updated basePenalty: %w", err)
+	}
+
+	if updated.Cmp(newBasePenalty) != 0 {
+		return fmt.Errorf("EProof basePenalty update verification failed: expected %s, got %s",
+			newBasePenalty.String(), updated.String())
+	}
+
+	log.Printf("E BasePenalty successfully updated and verified: %s\n", updated.String())
 	return nil
 }

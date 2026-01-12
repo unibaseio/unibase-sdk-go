@@ -136,6 +136,7 @@ func (c *ContractManage) AddPiece(pc types.PieceCore) (string, error) {
 	val.Mul(val, pc.Price)
 	val.Add(val, big.NewInt(int64(com.DefaultStreamPrice)))
 	val.Mul(val, big.NewInt(int64(pc.Policy.N)))
+	fmt.Println("submitpiece val: ", utils.FormatEth(val))
 
 	au, err := c.MakeAuth()
 	if err != nil {

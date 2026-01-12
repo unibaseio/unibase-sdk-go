@@ -382,6 +382,19 @@
   },
   {
     "type": "function",
+    "name": "setBasePenalty",
+    "inputs": [
+      {
+        "name": "_p",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "setMinProveTime",
     "inputs": [
       {

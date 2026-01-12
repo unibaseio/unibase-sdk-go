@@ -16,11 +16,12 @@ import (
 )
 
 type ContractManage struct {
-	Type       string
-	ChainID    *big.Int
-	RPC        string
-	SyncHeight int
-	sk         *ecdsa.PrivateKey
+	Type            string
+	ChainID         *big.Int
+	RPC             string
+	RPCForFilterLog string
+	SyncHeight      int
+	sk              *ecdsa.PrivateKey
 
 	TokenAddr common.Address
 
@@ -47,6 +48,7 @@ func NewContractManage(sk *ecdsa.PrivateKey, chainType string) (*ContractManage,
 	switch chainType {
 	case com.OPSepolia:
 		cm.RPC = com.OPSepoliaChainRPC
+		cm.RPCForFilterLog = com.OPSepoliaChainRPCForFilterLog
 		cm.ChainID = big.NewInt(int64(com.OPSepoliaChainID))
 		cm.SyncHeight = com.OPSepoliaSyncHeight
 
@@ -66,6 +68,7 @@ func NewContractManage(sk *ecdsa.PrivateKey, chainType string) (*ContractManage,
 		cm.MulAddr = com.OPSepoliaMulAddr
 	case com.OPBNBTestnet:
 		cm.RPC = com.OPBNBTestnetChainRPC
+		cm.RPCForFilterLog = com.OPBNBTestnetChainRPCForFilterLog
 		cm.ChainID = big.NewInt(int64(com.OPBNBTestnetChainID))
 		cm.SyncHeight = com.OPBNBTestnetSyncHeight
 
@@ -83,8 +86,9 @@ func NewContractManage(sk *ecdsa.PrivateKey, chainType string) (*ContractManage,
 		cm.KZGAddr = com.OPBNBTestnetKZGAddr
 		cm.AddAddr = com.OPBNBTestnetAddAddr
 		cm.MulAddr = com.OPBNBTestnetMulAddr
-	case com.BNBTestnet:
+	case com.BNBTestnetV2:
 		cm.RPC = com.BNBTestnetChainRPC
+		cm.RPCForFilterLog = com.BNBTestnetChainRPCForFilterLog
 		cm.ChainID = big.NewInt(int64(com.BNBTestnetChainID))
 		cm.SyncHeight = com.BNBTestnetSyncHeight
 
@@ -109,6 +113,7 @@ func NewContractManage(sk *ecdsa.PrivateKey, chainType string) (*ContractManage,
 		}
 	case com.LocalAnvil:
 		cm.RPC = com.LocalAnvilChainRPC
+		cm.RPCForFilterLog = com.LocalAnvilChainRPCForFilterLog
 		cm.ChainID = big.NewInt(int64(com.LocalAnvilChainID))
 		cm.SyncHeight = com.LocalAnvilSyncHeight
 
@@ -127,7 +132,7 @@ func NewContractManage(sk *ecdsa.PrivateKey, chainType string) (*ContractManage,
 		cm.AddAddr = com.LocalAnvilAddAddr
 		cm.MulAddr = com.LocalAnvilMulAddr
 	default:
-		return nil, fmt.Errorf("unsupportted chain type: %s, use 'bnb-testnet', 'op-sepolia' or 'opbnb-testnet'", chainType)
+		return nil, fmt.Errorf("unsupportted chain type: %s, use 'bnb-testnet-v2', 'op-sepolia' or 'opbnb-testnet'", chainType)
 	}
 
 	chainRPC := os.Getenv("CHAIN_RPC")

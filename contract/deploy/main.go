@@ -8,40 +8,47 @@ import (
 	"math/big"
 
 	contract "github.com/MOSSV2/dimo-sdk-go/contract/common"
+	"github.com/MOSSV2/dimo-sdk-go/contract/v1/go/token"
 	"github.com/MOSSV2/dimo-sdk-go/contract/v2/go/eproof"
 	"github.com/MOSSV2/dimo-sdk-go/contract/v2/go/piece"
 	"github.com/MOSSV2/dimo-sdk-go/contract/v2/go/rsproof"
 	dlog "github.com/MOSSV2/dimo-sdk-go/lib/log"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
 var (
-	ChainURL      = contract.BNBTestnetChainRPC
-	ChainID       = int64(contract.BNBTestnetChainID)
-	blockInterval = uint64(3)
+	ChainURL = contract.BNBTestnetChainRPC
+	ChainID  = contract.BNBTestnetChainID
 
-	bankAddr  = contract.BNBTestnetBankAddr
-	tokenAddr = contract.BNBTestnetTokenAddr
+	blockInterval = uint64(3)
+	bankAddr      = contract.BNBTestnetBankAddr
+	tokenAddr     = contract.BNBTestnetTokenAddr
 )
 
 // V2 deployment configuration
 var (
-	slots        = uint64(16000)       // Epoch slots, 2h, blockInterval:450ms
-	delay        = uint64(7)           // Piece delay in epochs
-	minStore     = uint64(1200)        // Minimum storage time
-	maxStore     = uint64(12000)       // Maximum storage time
-	maxSize      = uint64(33554432)    // 32MB
-	minPrice     = big.NewInt(1e11)    // Minimum price per unit
-	streamPrice  = big.NewInt(1e12)    // Streaming price
-	minProveTime = big.NewInt(8000)    // Minimum prove time for RS/E proofs
+	slots    = uint64(16000)    // Epoch slots, 16000 * blockInterval(450ms) = 2h
+	delay    = uint64(7)        // Piece delay in epochs
+	minStore = uint64(1200)     // Minimum storage time, 1200 epochs = 100 days
+	maxStore = uint64(12000)    // Maximum storage time
+	maxSize  = uint64(33554432) // 32MB
+	// minPrice     = big.NewInt(1e11)    // Minimum price per unit, per epoch*MB
+	// streamPrice  = big.NewInt(1e12)    // Streaming price, per replica
+	minPrice     = big.NewInt(1e8)     // just for test
+	streamPrice  = big.NewInt(1e9)     // just for test
+	minProveTime = big.NewInt(8000)    // Minimum prove time for RS/E proofs, 1 hour
 	minPledgeMap = map[uint8]*big.Int{ // Node type -> minimum pledge mapping
-		1: new(big.Int).Mul(big.NewInt(1e18), big.NewInt(10)), // 10 tokens for type 1
-		2: new(big.Int).Mul(big.NewInt(1e18), big.NewInt(20)), // 20 tokens for type 2
-		3: new(big.Int).Mul(big.NewInt(1e18), big.NewInt(30)), // 30 tokens for type 3
+		// 1: new(big.Int).Mul(big.NewInt(1e18), big.NewInt(10)), // 10 tokens for type 1
+		// 2: new(big.Int).Mul(big.NewInt(1e18), big.NewInt(10)), // 10 tokens for type 2
+		// 3: new(big.Int).Mul(big.NewInt(1e18), big.NewInt(10)), // 10 tokens for type 3
+		1: new(big.Int).Mul(big.NewInt(1e15), big.NewInt(10)), // test
+		2: new(big.Int).Mul(big.NewInt(1e15), big.NewInt(10)), // test
+		3: new(big.Int).Mul(big.NewInt(1e15), big.NewInt(10)), // test
 	}
 
-	baseAddr = common.HexToAddress("")
+	baseAddr = common.HexToAddress("0xE0AD379735ba88B323298D091ff3b67Dd6C79852")
 )
 
 func init() {
@@ -58,8 +65,38 @@ func main() {
 		return
 	}
 	defer client.Close()
-	deployall_v1(client, *sk)
+	DeployTokenTest(client, *sk)
 	deployall_v2(client, *sk)
+}
+
+func DeployTokenTest(client *ethclient.Client, sk string) error {
+	au, err := contract.MakeAuth(ChainURL, ChainID, sk)
+	if err != nil {
+		return err
+	}
+
+	tAddr, tx, ti, err := token.DeployToken(au, client, "Unibase", "UB")
+	if err != nil {
+		return err
+	}
+
+	err = contract.CheckTx(ChainURL, tx.Hash())
+	if err != nil {
+		return err
+	}
+	log.Println("token: ", tAddr.Hex())
+	tokenAddr = tAddr
+
+	owner, err := ti.Owner(&bind.CallOpts{From: contract.Base})
+	if err != nil {
+		return err
+	}
+	bal, err := ti.BalanceOf(&bind.CallOpts{From: contract.Base}, owner)
+	if err != nil {
+		return err
+	}
+	log.Println("owner has token: ", bal)
+	return nil
 }
 
 func deployall_v1(client *ethclient.Client, sk string) {
@@ -218,6 +255,7 @@ func deployall_v2(client *ethclient.Client, sk string) {
 		return
 	}
 	owner := au.From
+	log.Printf("Using owner address: %s\n", owner.Hex())
 
 	// Step 1: Deploy verifier contracts (non-upgradeable)
 	log.Println("=== Deploying Verifier Contracts ===")

@@ -6,8 +6,9 @@ const (
 	ServerURL    = "http://54.251.11.180:8080"
 	OPSepolia    = "op-sepolia"
 	OPBNBTestnet = "opbnb-testnet"
-	BNBTestnet   = "bnb-testnet"
+	//BNBTestnet   = "bnb-testnet-v2"
 	LocalAnvil   = "local-anvil"
+	BNBTestnetV2 = "bnb-testnet-v2"
 )
 
 func CheckChain() string {
@@ -16,7 +17,7 @@ func CheckChain() string {
 		panic("please set env 'CHAIN_TYPE' to 'op-sepolia', 'opbnb-testnet' or 'bnb-testnet'")
 	}
 	switch ct {
-	case OPSepolia, OPBNBTestnet, BNBTestnet:
+	case OPSepolia, OPBNBTestnet, BNBTestnetV2:
 		return ct
 	default:
 		panic("please set env 'CHAIN_TYPE' to 'op-sepolia', 'opbnb-testnet' or 'bnb-testnet'")

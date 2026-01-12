@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 
 	com "github.com/MOSSV2/dimo-sdk-go/contract/common"
-	contract "github.com/MOSSV2/dimo-sdk-go/contract/v1"
+	contract "github.com/MOSSV2/dimo-sdk-go/contract/v2"
 	"github.com/MOSSV2/dimo-sdk-go/lib/key"
 	"github.com/MOSSV2/dimo-sdk-go/lib/types"
 	"github.com/MOSSV2/dimo-sdk-go/sdk"

@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 	"time"
 
-	contract "github.com/MOSSV2/dimo-sdk-go/contract/v1"
+	contract "github.com/MOSSV2/dimo-sdk-go/contract/v2"
 	lerror "github.com/MOSSV2/dimo-sdk-go/lib/error"
 	"github.com/MOSSV2/dimo-sdk-go/lib/key"
 	"github.com/MOSSV2/dimo-sdk-go/lib/logfs"
